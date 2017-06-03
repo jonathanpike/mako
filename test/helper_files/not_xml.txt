@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jonathan Pike, software developer</title>
+<link rel="stylesheet" href="/css/site.css">
+<link rel="canonical" href="https://www.jonathanpike.net/">
+<link rel="alternate" type="application/rss+xml" title="Jonathan Pike, software developer" href="https://www.jonathanpike.net/feed.xml"/>
+<link rel="alternate" type="application/json" href="https://www.jonathanpike.net/feed.json">
+<script async src="/assets/js/main.min.js"></script>
+ 
+<title>Jonathan Pike, software developer | The personal weblog of Jonathan Pike, exploring life as a software developer</title>
+<meta property="og:title" content="Jonathan Pike, software developer"/>
+<meta name="author" content="Jonathan Pike"/>
+<meta property="og:locale" content="en_US"/>
+<meta name="description" content="The personal weblog of Jonathan Pike, exploring life as a software developer"/>
+<meta property="og:description" content="The personal weblog of Jonathan Pike, exploring life as a software developer"/>
+<link rel="canonical" href="https://www.jonathanpike.net/"/>
+<meta property="og:url" content="https://www.jonathanpike.net/"/>
+<meta property="og:site_name" content="Jonathan Pike, software developer"/>
+<link rel="next" href="https://www.jonathanpike.net/page/2">
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:site" content="@jonathanpike"/>
+<meta name="twitter:creator" content="@Jonathan Pike"/>
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"WebSite","name":"Jonathan Pike, software developer","headline":"Jonathan Pike, software developer","author":{"@type":"Person","name":"Jonathan Pike"},"description":"The personal weblog of Jonathan Pike, exploring life as a software developer","sameAs":["https://ca.linkedin.com/in/pikejonathan","https://twitter.com/jonathanpike","https://github.com/jonathanpike"],"url":"https://www.jonathanpike.net/"}</script>
+ 
+</head>
+<body>
+<div class="container">
+<header>
+<div class="animated fadeInDown namebox" id="box">
+<h1 class="namebox-title">Hi, I'm</h1>
+<h1 class="namebox-title"><a href="/">Jonathan Pike</a> 👋</h1>
+<p class="namebox-subtitle">I'm a software developer in Mississauga, Ontario.</p>
+<hr/>
+<ul class="navigation">
+<li class="navigation-item"><h4 class="navigation-item-text"><a href="/about/">About</a><span class="gray-text"></h4></li>
+<li class="navigation-item"><h4 class="navigation-item-text"><a href="/archive/">Archive</a><span class="gray-text"></h4></li>
+<li class="navigation-item"><h4 class="navigation-item-text"><a href="/feed.xml">RSS</a></h4></li>
+</ul>
+</div>
+</header>
+<div class="contentbox">
+ 
+<ul id="post-list">
+<li class="post">
+<header>
+<h1 class="title"><a href="/2017/03/Bootstrap-to-Neat">Migrating from Boostrap-Sass v3.3.5 to Neat 2.0.0</a></h1>
+<p class="meta">March 06, 2017 # <a href="/2017/03/Bootstrap-to-Neat">permalink</a></p>
+</header>
+<article>
+<p>A long time ago, I opened an <a href="https://github.com/jonathanpike/jonathanpike.github.io/issues/2">issue</a> that simply said:</p>
+<blockquote>
+<p>SCSS features aren’t being used effectively. Needs refactoring.</p>
+</blockquote>
+<p>When I first started making my theme, I decided to use <a href="http://getbootstrap.com/">Bootstrap</a> to speed up development. Bootstrap is a wonderful framework, making websites look great right out of the box. Since it’s so full featured, it also included a lot of elements that I would never use for this site. Why not explore some of Sass’ interesting features and remove what I didn’t need.</p>
+<p>I first took a baseline of how much code Bootstrap contributed:</p>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>cloc jonathanpike.github.io/
+     137 text files.
+     137 unique files.
+      79 files ignored.
+
+http://cloc.sourceforge.net v 1.60  <span class="nv">T</span><span class="o">=</span>0.94 s <span class="o">(</span>101.9 files/s, 9558.7 lines/s<span class="o">)</span>
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+SASS                            82           1245           1603           5822
+HTML                             9             34              3            179
+Javascript                       3              7              3             39
+XML                              1              0              0             30
+YAML                             1              6              7             26
+-------------------------------------------------------------------------------
+SUM:                            96           1292           1616           6096
+-------------------------------------------------------------------------------
+</code></pre>
+</div>
+<p>A whopping <strong>5822</strong> lines of Sass! Some of that was my own code, but the vast majority was from Bootstrap.</p>
+<p>I decided to do the obvious thing and search <em>“lightweight grid framework”</em> on Google, and I found <a href="http://neat.bourbon.io/">Neat</a> by Thoughtbot. Neat uses Sass mixins instead of concrete classes, like Bootstrap. This would be a great opportunity to learn more about Sass’ mixin system. This also turned out to be the biggest learning curve.</p>
+<p><strong>The Container</strong></p>
+<p>The starting point for both Bootstrap and Neat is the grid container. Bootstrap defines it through a class, either <code class="highlighter-rouge">.container</code> for fixed-width grids or <code class="highlighter-rouge">.container-fluid</code> for full-width grids. All of the options for the container are taken care of for you with either of those classes. With Neat, I had to define my own container class (called <code class="highlighter-rouge">.container</code>, which I carried over from Bootstrap) and then mix in Neats <code class="highlighter-rouge">grid-container</code>:</p>
+<div class="language-sass highlighter-rouge"><pre class="highlight"><code><span class="nc">.container</span> <span class="err">{</span>
+  <span class="k">@include</span> <span class="nd">grid-container</span><span class="err">;</span>
+
+  <span class="k">@media</span> <span class="n">only</span> <span class="n">screen</span> <span class="nf">and</span> <span class="p">(</span><span class="n">min-width</span><span class="o">:</span> <span class="m">768px</span><span class="p">)</span> <span class="err">{</span>
+    <span class="nl">max-width</span><span class="p">:</span> <span class="m">750px</span><span class="err">;</span>
+  <span class="err">}</span>
+
+  <span class="k">@media</span> <span class="n">only</span> <span class="n">screen</span> <span class="nf">and</span> <span class="p">(</span><span class="n">min-width</span><span class="o">:</span> <span class="m">992px</span><span class="p">)</span> <span class="err">{</span>
+    <span class="nl">max-width</span><span class="p">:</span> <span class="m">970px</span><span class="err">;</span>
+  <span class="err">}</span>
+
+  <span class="k">@media</span> <span class="n">only</span> <span class="n">screen</span> <span class="nf">and</span> <span class="p">(</span><span class="n">min-width</span><span class="o">:</span> <span class="m">1200px</span><span class="p">)</span> <span class="err">{</span>
+    <span class="nl">max-width</span><span class="p">:</span> <span class="m">1170px</span><span class="err">;</span>
+  <span class="err">}</span>
+
+  <span class="nl">margin-left</span><span class="p">:</span> <span class="nb">auto</span><span class="err">;</span>
+  <span class="nl">margin-right</span><span class="p">:</span> <span class="nb">auto</span><span class="err">;</span>
+<span class="err">}</span>
+</code></pre>
+</div>
+<p><code class="highlighter-rouge">grid-container</code> is super simple. It adds the following to my <code class="highlighter-rouge">.container::after</code> class:</p>
+<div class="language-sass highlighter-rouge"><pre class="highlight"><code>  <span class="nl">clear</span><span class="p">:</span> <span class="nb">both</span><span class="err">;</span>
+  <span class="nl">content</span><span class="p">:</span> <span class="s2">""</span><span class="err">;</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="nb">block</span><span class="err">;</span>
+</code></pre>
+</div>
+<p>I also added a few extra rules to keep the container in the centre of the page and make it not fill up the full width of the screen at different screen sizes.</p>
+<p><strong>The Columns</strong></p>
+<p>Bootstrap has several different classes for columns. I was using <code class="highlighter-rouge">col-xs-[x]</code> and <code class="highlighter-rouge">col-md-[x]</code> to define columns for desktop and mobile. My main content container (the one you’re reading in right now), for example, used <code class="highlighter-rouge">col-xs-12 col-md-8</code> to make it span 8 of 12 columns on desktop and 12 of 12 columns on mobile.</p>
+<p>Neat, out of the box, doesn’t provide you with different sized columns defined by breakpoints for mobile, desktop, etc. Instead, it provides you the tools to make those decisions for yourself. This was the hardest part, for me, when I switched from Bootstrap to Neat.</p>
+<p>Neat’s default grid is defined as follows:</p>
+<div class="language-sass highlighter-rouge"><pre class="highlight"><code><span class="nv">$neat-grid</span><span class="p">:</span> <span class="p">(</span>
+  <span class="nl">columns</span><span class="p">:</span> <span class="m">12</span><span class="o">,</span>
+  <span class="na">gutter</span><span class="p">:</span> <span class="m">20px</span><span class="o">,</span>
+<span class="o">);</span>
+</code></pre>
+</div>
+<p>I played around with it a little, and found that these settings were fine for my site. Neat provides the <code class="highlighter-rouge">grid-media</code> mixin function that allows you to define a custom Neat grid and use that to create a media query for different sized screens. At first, I thought that I would use the default <code class="highlighter-rouge">$neat-grid</code> for desktop and define a custom <code class="highlighter-rouge">$mobile-neat-grid</code> for my mobile needs. That ended up not working as I expected, although I realized later that my mistake was the order my media queries were in: media queries need to be ordered from smallest to biggest, but I was ordering from biggest to smallest. What I ended up doing was exactly the opposite. I defined a <code class="highlighter-rouge">$large-neat-grid</code> as follows:</p>
+<div class="language-sass highlighter-rouge"><pre class="highlight"><code><span class="nv">$large-neat-grid</span><span class="p">:</span> <span class="p">(</span>
+  <span class="na">media</span><span class="p">:</span> <span class="m">1000px</span><span class="o">,</span>
+<span class="o">);</span>
+</code></pre>
+</div>
+<p>This just provided a media query breakpoint of 1000px, and didn’t change any of the default settings on <code class="highlighter-rouge">$neat-grid</code>. Next, wherever I used the Neat <code class="highlighter-rouge">grid-column</code> mixin, I also used <code class="highlighter-rouge">grid-media</code> to provide the media query for desktop. Using the example of my main content container:</p>
+<div class="language-sass highlighter-rouge"><pre class="highlight"><code><span class="nc">.contentbox</span> <span class="err">{</span>
+  <span class="k">@include</span> <span class="nd">grid-column</span><span class="p">(</span><span class="m">12</span><span class="p">)</span><span class="err">;</span>
+
+  <span class="k">@include</span> <span class="nd">grid-media</span><span class="p">(</span><span class="nv">$large-neat-grid</span><span class="p">)</span><span class="err">{</span>
+    <span class="k">@include</span> <span class="nd">grid-column</span><span class="p">(</span><span class="m">8</span><span class="p">)</span><span class="err">;</span>
+  <span class="err">}</span>
+
+  <span class="nl">margin-bottom</span><span class="p">:</span> <span class="m">20px</span><span class="err">;</span>
+  <span class="nl">padding</span><span class="p">:</span> <span class="m">0px</span> <span class="m">30px</span> <span class="m">0px</span> <span class="m">30px</span><span class="err">;</span>
+  <span class="k">@media</span> <span class="n">only</span> <span class="n">screen</span> <span class="nf">and</span> <span class="p">(</span><span class="n">max-width</span><span class="o">:</span> <span class="m">500px</span><span class="p">)</span> <span class="err">{</span>
+    <span class="nl">padding</span><span class="p">:</span> <span class="m">0px</span><span class="err">;</span>
+  <span class="err">}</span>
+<span class="err">}</span>
+</code></pre>
+</div>
+<p><code class="highlighter-rouge">grid-media</code> wraps the <code class="highlighter-rouge">grid-column</code> styles in a media query defined by the rules set for the custom <code class="highlighter-rouge">$large-neat-grid</code> that I defined earlier. Easy and clear. The transition was made even easier because I had already defined classes on all of my main container elements, so I just had to add the Neat mixins to each of these to replicate the layout I had made with Bootstrap.</p>
+<p><strong>Other Styles</strong></p>
+<p>One thing I didn’t realize was how much Bootstrap defined things like font styles and spacing within divs. When I removed it, the whole layout looked really weird. After the initial shock, I got to work defining just the styles I needed to make the site look the way I wanted. This was more work, involved more trial and error, but left me with a result that is much leaner and meaner.</p>
+<p><strong>Results</strong></p>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>cloc jonathanpike.github.io/
+      87 text files.
+      87 unique files.
+      79 files ignored.
+
+http://cloc.sourceforge.net v 1.60  <span class="nv">T</span><span class="o">=</span>0.79 s <span class="o">(</span>58.1 files/s, 2393.9 lines/s<span class="o">)</span>
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+SASS                            32            181            541            842
+HTML                             9             33              3            179
+Javascript                       3              7              3             39
+XML                              1              0              0             30
+YAML                             1              6              7             26
+-------------------------------------------------------------------------------
+SUM:                            46            227            554           1116
+-------------------------------------------------------------------------------
+</code></pre>
+</div>
+<p>From 5822 lines to 842 lines – an <strong>85%</strong> decrease!</p>
+<p><strong>Conclusions</strong></p>
+<p>Neat provides a, <em>ahem</em>, neat way of creating a grid based layout with Sass mixins. I enjoyed learning how to use the library and cleaning up my Sass codebase to use more Sass features, such as variables. Neat just had a major upgrade, which dramatically simplified the API. Read all about the changes <a href="https://robots.thoughtbot.com/building-the-future-of-floated-css-grids">here</a>.</p>
+</article>
+</li>
+<li class="post">
+<header>
+<h1 class="title"><a href="/2017/02/Unexplained-CSV-Whitespace">Unexplained CSV Whitespace</a></h1>
+<p class="meta">February 27, 2017 # <a href="/2017/02/Unexplained-CSV-Whitespace">permalink</a></p>
+</header>
+<article>
+<p><strong>TLDR</strong>: Blank lines in a <code class="highlighter-rouge">.csv.erb</code> template render as whitespace in the final CSV output.</p>
+<p>Using the method I <a href="https://jonathanpike.net/2016/09/Exporting-CSV-From-Rails">described</a> for exporting CSV, I created a new template and was testing it. When I downloaded the CSV file and opened it, it appeared that the file was empty. What was going on? I noticed that the scroll bar was rather long, so I started scrolling… and scrolling… and scrolling, down 1369 lines. There’s the data. Then, I looked at the total lines in the file: 2738, which is double 1369. It appears that, somewhere, I was inserting 1368 blank lines into the file prior to the data being written.</p>
+<p>I started debugging my <code class="highlighter-rouge">.csv.erb</code> template to see where this whitespace was coming from. First, I set a breakpoint in the template right before rendering the CSV. Ruby’s CSV library wraps a string in a CSV object, and I could verify that the string had no whitespace.</p>
+<p>Next, I started removing elements from the CSV template until I found the culprit. What I found was that an entire section of the CSV document was where the problem was happening. No matter what subsection of that section I removed, the issue would still persist. If I removed the entire thing, the output would begin at line one.</p>
+<p>Finally, I decided to try something that I thought was crazy: I had defined a few variables in ERB tags earlier in the document, and I had inserted a blank line between each of these for readability. What if I removed those? The output began at line one. Bingo! Not so crazy after all!</p>
+<p>If you have more whitespace than you bargained for in CSV output and are using a <code class="highlighter-rouge">.csv.erb</code> view template, check for blank lines. These could be the culprit.</p>
+</article>
+</li>
+<li class="post">
+<header>
+<h1 class="title"><a href="/2016/09/Exporting-CSV-From-Rails">Exporting CSV From Rails In Multiple Formats</a></h1>
+<p class="meta">September 28, 2016 # <a href="/2016/09/Exporting-CSV-From-Rails">permalink</a></p>
+</header>
+<article>
+<p>Exporting data from Rails to be used in different applications can be a tricky topic. What format do you need to export to? What if one export needs some data and another export needs other data? I had to solve exactly this problem with CSV. Ruby has an excellent <a href="http://ruby-doc.org/stdlib-2.3.0/libdoc/csv/rdoc/CSV.html">CSV Library</a> that is ripe for use with Rails. From my research, there are 2 basic ways of exporting CSV data from a Rails application that I have come across so far: <a href="https://www.lockyy.com/posts/rails-4/exporting-csv-files-in-rails">calling <code class="highlighter-rouge">to_csv</code> on a model object in the Controller</a> and <a href="http://nithinbekal.com/posts/rails-csv-export/">generating CSV directly in the view</a>.</p>
+<p>Calling <code class="highlighter-rouge">to_csv</code> is a great option if you only ever need the CSV data in one format. My problem was more complex: I needed to allow the user to choose what format the CSV data was exported in, and then provide it in that format. To solve this problem, I chose to render the CSV in the view. Here’s how I did it:</p>
+<p><strong>The Controller</strong></p>
+<p>Rails controller actions respond to HTML by default. Luckly, setting up your controller to respond to CSV is really easy using <a href="http://api.rubyonrails.org/classes/ActionController/MimeResponds.html#method-i-respond_to"><code class="highlighter-rouge">ActionController::MimeResponds#respond_to</code></a>, as follows:</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">index</span>
+	<span class="c1"># Standard model queries here...</span>
+	
+	<span class="vi">@template</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="ss">:template</span><span class="p">]</span>
+	
+	<span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+		<span class="nb">format</span><span class="p">.</span><span class="nf">html</span>
+		<span class="nb">format</span><span class="p">.</span><span class="nf">csv</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">template: </span><span class="s2">"path/to/</span><span class="si">#{</span><span class="vi">@template</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+	<span class="k">end</span> 
+<span class="k">end</span> 
+</code></pre>
+</div>
+<p>The most important portion of the <code class="highlighter-rouge">index</code> action is the <code class="highlighter-rouge">@template</code> variable. When the user chooses what format they would like the CSV exported as, the download link provides a param that tells the controller what CSV template to render.</p>
+<p><strong>Bonus Tip:</strong> Optionally, you can also set the <code class="highlighter-rouge">Content-Disposition</code> header to make the CSV file download automatically and set a file name, like so:</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">format</span><span class="p">.</span><span class="nf">csv</span> <span class="k">do</span> 
+	<span class="n">headers</span><span class="p">[</span><span class="s1">'Content-Disposition'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"attachment;filename=Your-File-Name-Here.csv"</span>
+	<span class="n">render</span> <span class="ss">template: </span><span class="s2">"path/to/</span><span class="si">#{</span><span class="vi">@template</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span> 
+</code></pre>
+</div>
+<p><strong>The View</strong></p>
+<p>Here’s where Ruby’s CSV Library comes in handy. Create as many CSV templates (in <code class="highlighter-rouge">csv.erb</code> format, so you can embed Ruby directly in the template) as you need and save them wherever it makes sense. They will each look something like this (obviously, with variation in the data displayed):</p>
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;</span><span class="sx">% export </span><span class="o">=</span> <span class="no">CSV</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="p">{</span> <span class="ss">headers: </span><span class="p">[</span><span class="s2">"Array"</span><span class="p">,</span> <span class="s2">"Of"</span><span class="p">,</span> <span class="s2">"Headers"</span><span class="p">],</span> <span class="ss">write_headers: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">encoding: </span><span class="s2">"UTF-8}) do |csv| %&gt; 
+	&lt;% csv.add_row data %&gt; 
+&lt;% end %&gt;
+&lt;%= export.lstrip.html_safe %&gt; 
+</span></code></pre>
+</div>
+<p>Let me explain what’s going on:</p>
+<ol>
+<li>The <code class="highlighter-rouge">export</code> variable is set to <a href="http://ruby-doc.org/stdlib-2.3.0/libdoc/csv/rdoc/CSV.html#method-c-generate"><code class="highlighter-rouge">CSV.generate</code></a>. This is the method that will be generating the actual CSV string that the user has requested.</li>
+<li><code class="highlighter-rouge">CSV.generate</code> takes 2 arguments: a string and a hash of options. I’ve passed a blank string and provided <code class="highlighter-rouge">headers</code>, <code class="highlighter-rouge">write_headers</code>, and <code class="highlighter-rouge">encoding</code> as options. <code class="highlighter-rouge">headers</code> is the content of the top row of your CSV file, and can be either an array of strings or a string separated by commas. <code class="highlighter-rouge">write_headers</code> specifies that the headers should be added to the CSV output (optional – <code class="highlighter-rouge">false</code> by default). <code class="highlighter-rouge">encoding</code> allows you to specify an encoding for the file (also optional – I’ve chosen UTF-8).</li>
+<li><code class="highlighter-rouge">CSV.generate</code> takes a block, in which you pass in the rows you actually want to add to the output. You can iterate over your data however you normally would in a view file in this block, and then pass the result to <code class="highlighter-rouge">csv.add_row</code>.</li>
+<li>I explicitly have not printed anything in the view file until the last line. If the last line was left out, the CSV download would be a blank file. This is optional (you can alternatively remove the <code class="highlighter-rouge">export</code> variable and call <code class="highlighter-rouge">CSV.generate</code> in <code class="highlighter-rouge">&lt;%= %&gt;</code> tags). I did it this way because:</li>
+</ol>
+<ul>
+<li>My own CSV exports required that no blank lines be present in the export. I am calling <code class="highlighter-rouge">lstrip</code> because I found that a <code class="highlighter-rouge">0A</code> (<code class="highlighter-rouge">LF</code>) character was being prepended to my CSV string, inexplicably.</li>
+<li>I am calling <code class="highlighter-rouge">html_safe</code> to avoid HTML escaping in the output. This should only be done if your data is known safe.</li>
+</ul>
+<p><strong>The Link</strong></p>
+<p>Now, when your user is given the option to select a CSV download, you can provide options that will provide the name of your CSV template to your controller. I implemented this by using a <a href="http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html#method-i-select_tag"><code class="highlighter-rouge">select_tag</code></a> together with <a href="http://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html#method-i-options_for_select"><code class="highlighter-rouge">options_for_select</code></a> that gathered the options from a Hash I provided. You can use whatever method provides the correct param to your controller.</p>
+<p>In just a few lines of code, Ruby and Rails provide everything needed to create a very flexible CSV exporting system. Hope this helps with your CSV exporting needs!</p>
+</article>
+</li>
+<li class="post">
+<header>
+<h1 class="title"><a href="/2016/08/Choosing-the-Firehose-Project">Choosing the Firehose Project</a></h1>
+<p class="meta">August 21, 2016 # <a href="/2016/08/Choosing-the-Firehose-Project">permalink</a></p>
+</header>
+<article>
+<p>It’s been almost a year since I enrolled and started down the path to change my career with <a href="http://www.thefirehoseproject.com">the Firehose Project</a>. While I’ve talked about my experience <a href="https://jonathanpike.net/2016/06/Bootcamp-Student-to-Junior-Developer">finding my first developer job</a>, I haven’t talked about why I chose the Firehose Project.</p>
+<p>Back in early 2015, I knew I wanted to transition my career into the tech industry, but I didn’t know exactly how. I had just completed my <a href="https://certification.comptia.org/certifications/a">CompTIA A+</a> certification, a process that made me realize I would prefer being a developer to being an IT professional. The only problem: developers need to have a degree in Computer Science, right? I couldn’t afford to go back to University for another 4 year degree in either time or money. Shortly after desparing that I could never become a developer, something amazing happened: I was introduced to programming bootcamps.</p>
+<p>I attended an info session for <a href="https://www.bloc.io">Bloc</a> in April 2015 that really pumped me up. I could become a developer without having to spend 4 years in Univeristy and tens of thousands of dollars on tuition! My son was just 1.5 months old at this point, and he needed the time that I would otherswise have to spend working on bootcamp curriculum. I promised myself I would join a bootcamp in September 2015, when my son would be 6 months old. I spent the intervening months researching the bootcamp I would join. <a href="http://learntocodewith.me/posts/online-coding-bootcamps/">The Most Epic Guide to Online Coding Bootcamps, Ever</a> by <a href="http://learntocodewith.me/about/">Laurence Bradford</a> coupled with <a href="https://www.coursereport.com">Course Report</a> helped me make a difficult call. While many other bootcamps seemed like they were good, the Firehose Project stood out because they taught algorithms in addition to the regular Rails curriculum. In the end, I chose Firehose because:</p>
+<ol>
+<li>The curriculum covered computer science fundamentals in addition to web development, keeping the changing framework material grounded in unchanging fundamental material and giving me a deeper understanding of how the frameworks work;</li>
+<li>The time commitment (15 weeks, at that time) was shorter than other bootcamps, but didn’t skimp on ground covered; and</li>
+<li>The price ($4,000, at that time) was more affordable than other bootcamps.</li>
+</ol>
+<p>During my 15 weeks, I learned a ton at a surprising pace: literally drinking from a firehose. Some of the best moments include:</p>
+<ol>
+<li>
+<p>Building the first tutorial application, <a href="https://splurty-jonathan-pike.herokuapp.com">Splurty</a>. Firehose is set up to give you quick wins, providing motivation to continue learning. It felt so good getting my development environment set up, generating a new Rails application, writing my first MVC code, typing <code class="highlighter-rouge">rails server</code>, and seeing the results instantly in my browser. Even more so when I could share what I built after getting it running on Heroku.</p>
+</li>
+<li>
+<p>The sessions I had with my mentor, <a href="http://www.jefferydurand.com">Jeff</a>, were informative, challenging, and really, really fun. I prepared questions throughout the week as I went through the course material, and Jeff would go over everything with me on Sunday evenings. He went out of his way to be helpful to me, often going over the alloted 1 hour time period we had. Jeff is a really great mentor and developer – he never ceased to amaze me with his deep knowledge of practically any question that I could throw at him. I can trace many of my major successes to our sessions. I’m sure that the other Firehose mentors are of equal caliber.</p>
+</li>
+<li>
+<p>The group project at the end of the program was worth the cost of the entire course. Being put into a group of 4 other developers and told to build a <a href="http://endgame-chess.herokuapp.com">chess application</a> from scratch together was an awesome experience. From going deeper into the Rails API and building out a database structure (including using <a href="http://eewang.github.io/blog/2013/03/12/how-and-when-to-use-single-table-inheritance-in-rails/">single table inheritance</a>), to pair programming with multiple members of the team using <a href="https://screenhero.com">Screenhero</a>, to solving complex problems and testing our solutions with TDD, this project had it all. It really gave me the opportunity to stretch my new developer wings and gain the confidence necessary to be able to go out into the world and present myself as a capable junior developer when it came time to look for jobs. Our team mentor, Travis, was a fantastic teacher and obviously very passionate about coding, and the weekly standups we had with him were great.</p>
+</li>
+</ol>
+<p>After graduation, I was supported by both Jeff and Travis, receiving feedback and advice about building my resume and how to ace the interview. Just a few months later, I achieved my goal and became a professional developer.</p>
+<p>In the months since starting my job, I’ve learned a ton more and have improved my skills a hundredfold. And because of the fantastic foundation that the Firehose Project gave me, I’m confident that I’ll continue to learn more and grow to be a better developer.</p>
+</article>
+</li>
+<li class="post">
+<header>
+<h1 class="title"><a href="/2016/06/Bootcamp-Student-to-Junior-Developer">Bootcamp Student to Junior Developer</a></h1>
+<p class="meta">June 22, 2016 # <a href="/2016/06/Bootcamp-Student-to-Junior-Developer">permalink</a></p>
+</header>
+<article>
+<p>Going from feeling <a href="https://jonathanpike.net/2016/03/Not-Smart-Enough">not smart enough to be a programmer</a> to being a <a href="http://www.thefirehoseproject.com/">programming bootcamp</a> student was a big change. Getting my development environment set up, starting the initial lessons, and becoming part of the Firehose Community all produced a sense of relief and joy. I was finally on the path to becoming a developer! Fast forward 15 weeks and I actually was a developer. I had completed my assigned tasks on the group <a href="http://endgame-chess.herokuapp.com">chess application</a> and felt very proud of the results. My next challenge was to face the great unknown: the job market for bootcamp graduates.</p>
+<p><strong>Resume</strong></p>
+<p>My first task was to polish up my resume and include my new programming knowledge and experience. I also decided to build a simple <a href="http://jonathanpike.net/resume/">resume page</a> on this site to display it. After all, I’m a web developer – making a page for my resume seemed like the obvious thing to do. After completing my resume, I solicited feedback from my mentors. That was a fantastic decision, and I encourage you to do the same. Some of the advice that I got was:</p>
+<ol>
+<li>
+<p><strong>Remember your audience</strong>. A technical hiring manager is someone who is, at very least, familiar with things like Rails or a pull request, making explanations of such things unnecessary. Don’t waste words (and space) on something that isn’t helping the hiring manager make a decision about whether you’re right for the job.</p>
+</li>
+<li>
+<p><strong>Make it easy for the hiring manager</strong>. Your resume is your first point of entry into an organization, not the end-all-be-all of you getting hired. Pay attention to what the job requirements are and check as many of those boxes as you have skills and experience. Make it easy for the hiring manager to move your resume to the yes pile for the next round.</p>
+</li>
+<li>
+<p><strong>Be honest</strong>. Don’t proclaim that you “know” something just because you’ve used it once, but don’t be afraid to say where your interests lie and what you’re currently learning. Being a developer means you’re in for a career of constant learning and growing. Show your curiosity.</p>
+</li>
+<li>
+<p><strong>The more the merrier</strong>. Another great decision I made was to not limit myself to a single resume location. I mirrored the information in my resume to <a href="https://ca.linkedin.com/in/pikejonathan">LinkedIn</a> and <a href="http://stackoverflow.com/cv/jonathanpike">Stack Overflow Careers</a>, allowing more potential employers to stumble accross one of my profiles. One benefit of the latter was that it also produced a nice PDF to submit via e-mail, for employers who wanted that.</p>
+</li>
+</ol>
+<p><strong>Job Hunting</strong></p>
+<p>Once my resume was ready, I took to looking for jobs. My approach here was not very scientific: visit a few job boards daily that good companies advertised on, make a list of all the positions that sounded interesting, and apply to those positions on my list. My favourite job boards were:</p>
+<ol>
+<li><a href="http://stackoverflow.com/jobs">Stack Overflow Jobs</a>. This was my most used job board. There are a lot of companies that post here every day and the filters are great. If you create a profile, they will also match jobs with your interests and skills automatically.</li>
+<li><a href="https://weworkremotely.com/">We Work Remotely</a>. This board is <em>the</em> board to look at for remote work. There are fewer listings, but they’re all guaranteed to actually be hiring remotely.</li>
+<li><a href="https://www.themuse.com/jobs">The Muse Jobs</a>. The “Filter Jobs” feature on this board is great to look at larger companies in your area. The profiles they have of the companies you’re looking at are the best feature here.</li>
+</ol>
+<p>Around the time I started looking for a job, <a href="http://cobyism.com/remotejobseeker/">The Complete Remote Jobseeker’s Handbook</a>, an eBook from <a href="https://github.com/cobyism">Coby Chapple</a> (a designer at GitHub), was fortuitously released. This eBook is filled with great information for seeking remote work, including the benefits (and curses) of being a remote worker, lists of high quality job boards to look for remote work, strategies for applying for jobs (this was applicable to any job hunting, remote or not), and interviewing tips. My biggest takeaway from the book was that the interviewer <strong>wants you to succeed</strong>: finding and interviewing candidates is as much work for a company as applying and interviewing is for you. If you’re the right person for the job, their work is over, as is yours. It’s win-win!</p>
+<p>Another resource I found helpful was <a href="https://www.interviewcake.com">Interview Cake</a>, a site that promises to teach you to be good at programming interviews. While I didn’t actually face many technical challenges in the interviews I completed, this site was a great confidence booster as I realized that I was a better problem solver than I thought. And I learned a lot from the practice problems too! Well worth the cost of admission.</p>
+<p><strong>Applying for Jobs</strong></p>
+<p>During my job hunt, I kept a detailed spreadsheet of the companies I applied for (including a copy of the job description, the date I applied, and the title of the job). From late January to early April, I applied for <strong>23</strong> jobs, which lead to <strong>4</strong> interviews. Early on, I spent a lot of time crafting a unique cover letter to each position I applied for, which meant that I was only applying to 2 positions a week (or less, depending on the time I had to spend on applications). I asked <a href="https://github.com/kenmazaika">Ken Mazaika</a> for some advice as I was going along, and he suggested I focus on a higher volume of applications, as (he estimated) that you have around a 10% chance of getting a response from companies for a junior role. I took his advice and used the cover letters that I had already written to prepare a template. This enabled me to apply to 5 or 6 a week (at peak).</p>
+<p>Of the interviews I had, <strong>2</strong> were telephone screens and <strong>2</strong> were in person interviews. When it came to technical challenges, one of the telephone screens had me answering basic object oriented programming and responsive web design questions and one of the in person interviews had me filling out a general web development quiz. I never had the dreaded whiteboard interview (whew!). I was also given one take home assignment: building a simple <a href="http://wc-todo.herokuapp.com">to do app</a> with the technology of my choice.</p>
+<p>A real surprise came when I was contacted on LinkedIn about a potential job opportunity – a company in Toronto was hiring Rails developers, and the recruiter noticed I had some experience with Ruby and Rails. After a phone screen, 2 in person interviews, and a take home assignment, I was given a job offer from <a href="http://www.bioconnect.com">BioConnect</a> to work on their Rails time and attendance application, <a href="http://www.teamworks.cloud">TeamWorks</a>. I accepted that offer and have been working on TeamWorks since the end of May. My first month as a software developer has been better than I ever could have expected. I work with a great team, I’ve been given the opportunity to learn a lot of new things, and I’m doing something that I really enjoy.</p>
+<p>If you’re currently in a bootcamp program, fear not about the great unknown of the job market. You may face a lot of rejection (or be ignored) on the road to getting your first job, and you may feel out of your league at times. Keep looking for the next big opportunity, keep seeking advice from mentors, and (most of all) keep coding!</p>
+</article>
+</li>
+</ul>
+ 
+<div class="paginatebox">
+<div class="paginate text-center">
+<span class="meta">&laquo; Prev</span>
+<span class="meta">Page 1 of 7</span>
+<a rel="next" href="/page/2">Next &raquo;</a>
+</div>
+</div>
+</div>
+<hr class="rule"/>
+<footer>
+<div class="footerbox">
+<p class="text-center">Have a great rest of your <span id="day">day</span>!</p>
+<br/>
+<p class="meta text-center">&copy; 2015–2017 Jonathan Pike</p>
+</div>
+</footer>
+</div>
+</body>
+</html>

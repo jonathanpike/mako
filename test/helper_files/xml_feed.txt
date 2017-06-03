@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jonathan Pike, software developer</title>
+    <description>The personal weblog of Jonathan Pike, exploring life as a software developer</description>
+    <link>https://www.jonathanpike.net/</link>
+    <atom:link href="https://www.jonathanpike.net/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 22 May 2017 18:23:06 -0400</pubDate>
+    <lastBuildDate>Mon, 22 May 2017 18:23:06 -0400</lastBuildDate>
+    <generator>Jekyll v3.4.3</generator>
+    
+      <item>
+        <title>Migrating from Boostrap-Sass v3.3.5 to Neat 2.0.0</title>
+        <description>&lt;p&gt;A long time ago, I opened an &lt;a href=&quot;https://github.com/jonathanpike/jonathanpike.github.io/issues/2&quot;&gt;issue&lt;/a&gt; that simply said:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;SCSS features aren’t being used effectively. Needs refactoring.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;When I first started making my theme, I decided to use &lt;a href=&quot;http://getbootstrap.com/&quot;&gt;Bootstrap&lt;/a&gt; to speed up development. Bootstrap is a wonderful framework, making websites look great right out of the box.  Since it’s so full featured, it also included a lot of elements that I would never use for this site.  Why not explore some of Sass’ interesting features and remove what I didn’t need.&lt;/p&gt;
+
+&lt;p&gt;I first took a baseline of how much code Bootstrap contributed:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;cloc jonathanpike.github.io/
+     137 text files.
+     137 unique files.
+      79 files ignored.
+
+http://cloc.sourceforge.net v 1.60  &lt;span class=&quot;nv&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.94 s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;101.9 files/s, 9558.7 lines/s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+SASS                            82           1245           1603           5822
+HTML                             9             34              3            179
+Javascript                       3              7              3             39
+XML                              1              0              0             30
+YAML                             1              6              7             26
+-------------------------------------------------------------------------------
+SUM:                            96           1292           1616           6096
+-------------------------------------------------------------------------------
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;A whopping &lt;strong&gt;5822&lt;/strong&gt; lines of Sass!  Some of that was my own code, but the vast majority was from Bootstrap.&lt;/p&gt;
+
+&lt;p&gt;I decided to do the obvious thing and search &lt;em&gt;“lightweight grid framework”&lt;/em&gt; on Google, and I found &lt;a href=&quot;http://neat.bourbon.io/&quot;&gt;Neat&lt;/a&gt; by Thoughtbot.  Neat uses Sass mixins instead of concrete classes, like Bootstrap.  This would be a great opportunity to learn more about Sass’ mixin system.  This also turned out to be the biggest learning curve.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The Container&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The starting point for both Bootstrap and Neat is the grid container.  Bootstrap defines it through a class, either &lt;code class=&quot;highlighter-rouge&quot;&gt;.container&lt;/code&gt; for fixed-width grids or &lt;code class=&quot;highlighter-rouge&quot;&gt;.container-fluid&lt;/code&gt; for full-width grids. All of the options for the container are taken care of for you with either of those classes.  With Neat, I had to define my own container class (called &lt;code class=&quot;highlighter-rouge&quot;&gt;.container&lt;/code&gt;, which I carried over from Bootstrap) and then mix in Neats &lt;code class=&quot;highlighter-rouge&quot;&gt;grid-container&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sass highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;.container&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;@include&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;grid-container&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;@media&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;only&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screen&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min-width&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;768px&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nl&quot;&gt;max-width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;750px&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;@media&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;only&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screen&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min-width&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;992px&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nl&quot;&gt;max-width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;970px&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;@media&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;only&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screen&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min-width&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1200px&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nl&quot;&gt;max-width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1170px&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nl&quot;&gt;margin-left&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;auto&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;margin-right&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;auto&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;grid-container&lt;/code&gt; is super simple.  It adds the following to my &lt;code class=&quot;highlighter-rouge&quot;&gt;.container::after&lt;/code&gt; class:&lt;/p&gt;
+
+&lt;div class=&quot;language-sass highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;nl&quot;&gt;clear&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;both&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I also added a few extra rules to keep the container in the centre of the page and make it not fill up the full width of the screen at different screen sizes.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The Columns&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Bootstrap has several different classes for columns.  I was using &lt;code class=&quot;highlighter-rouge&quot;&gt;col-xs-[x]&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;col-md-[x]&lt;/code&gt; to define columns for desktop and mobile.  My main content container (the one you’re reading in right now), for example, used &lt;code class=&quot;highlighter-rouge&quot;&gt;col-xs-12 col-md-8&lt;/code&gt; to make it span 8 of 12 columns on desktop and 12 of 12 columns on mobile.&lt;/p&gt;
+
+&lt;p&gt;Neat, out of the box, doesn’t provide you with different sized columns defined by breakpoints for mobile, desktop, etc.  Instead, it provides you the tools to make those decisions for yourself.  This was the hardest part, for me, when I switched from Bootstrap to Neat.&lt;/p&gt;
+
+&lt;p&gt;Neat’s default grid is defined as follows:&lt;/p&gt;
+
+&lt;div class=&quot;language-sass highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$neat-grid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;gutter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20px&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I played around with it a little, and found that these settings were fine for my site.  Neat provides the &lt;code class=&quot;highlighter-rouge&quot;&gt;grid-media&lt;/code&gt; mixin function that allows you to define a custom Neat grid and use that to create a media query for different sized screens.  At first, I thought that I would use the default &lt;code class=&quot;highlighter-rouge&quot;&gt;$neat-grid&lt;/code&gt; for desktop and define a custom &lt;code class=&quot;highlighter-rouge&quot;&gt;$mobile-neat-grid&lt;/code&gt; for my mobile needs.  That ended up not working as I expected, although I realized later that my mistake was the order my media queries were in: media queries need to be ordered from smallest to biggest, but I was ordering from biggest to smallest. What I ended up doing was exactly the opposite.  I defined a &lt;code class=&quot;highlighter-rouge&quot;&gt;$large-neat-grid&lt;/code&gt; as follows:&lt;/p&gt;
+
+&lt;div class=&quot;language-sass highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$large-neat-grid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;media&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1000px&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This just provided a media query breakpoint of 1000px, and didn’t change any of the default settings on &lt;code class=&quot;highlighter-rouge&quot;&gt;$neat-grid&lt;/code&gt;.  Next, wherever I used the Neat &lt;code class=&quot;highlighter-rouge&quot;&gt;grid-column&lt;/code&gt; mixin, I also used &lt;code class=&quot;highlighter-rouge&quot;&gt;grid-media&lt;/code&gt; to provide the media query for desktop.  Using the example of my main content container:&lt;/p&gt;
+
+&lt;div class=&quot;language-sass highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;.contentbox&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;@include&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;grid-column&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;@include&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;grid-media&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$large-neat-grid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;@include&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;grid-column&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nl&quot;&gt;margin-bottom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20px&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;padding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0px&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;30px&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0px&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;30px&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;@media&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;only&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;screen&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;max-width&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;500px&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nl&quot;&gt;padding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0px&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;grid-media&lt;/code&gt; wraps the &lt;code class=&quot;highlighter-rouge&quot;&gt;grid-column&lt;/code&gt; styles in a media query defined by the rules set for the custom &lt;code class=&quot;highlighter-rouge&quot;&gt;$large-neat-grid&lt;/code&gt; that I defined earlier.  Easy and clear.  The transition was made even easier because I had already defined classes on all of my main container elements, so I just had to add the Neat mixins to each of these to replicate the layout I had made with Bootstrap.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Other Styles&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;One thing I didn’t realize was how much Bootstrap defined things like font styles and spacing within divs.  When I removed it, the whole layout looked really weird.  After the initial shock, I got to work defining just the styles I needed to make the site look the way I wanted.  This was more work, involved more trial and error, but left me with a result that is much leaner and meaner.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Results&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;cloc jonathanpike.github.io/
+      87 text files.
+      87 unique files.
+      79 files ignored.
+
+http://cloc.sourceforge.net v 1.60  &lt;span class=&quot;nv&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.79 s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;58.1 files/s, 2393.9 lines/s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+SASS                            32            181            541            842
+HTML                             9             33              3            179
+Javascript                       3              7              3             39
+XML                              1              0              0             30
+YAML                             1              6              7             26
+-------------------------------------------------------------------------------
+SUM:                            46            227            554           1116
+-------------------------------------------------------------------------------
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;From 5822 lines to 842 lines – an &lt;strong&gt;85%&lt;/strong&gt; decrease!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Conclusions&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Neat provides a, &lt;em&gt;ahem&lt;/em&gt;, neat way of creating a grid based layout with Sass mixins.  I enjoyed learning how to use the library and cleaning up my Sass codebase to use more Sass features, such as variables. Neat just had a major upgrade, which dramatically simplified the API.  Read all about the changes &lt;a href=&quot;https://robots.thoughtbot.com/building-the-future-of-floated-css-grids&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 06 Mar 2017 11:34:00 -0500</pubDate>
+        <link>https://www.jonathanpike.net/2017/03/Bootstrap-to-Neat</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2017/03/Bootstrap-to-Neat</guid>
+      </item>
+    
+      <item>
+        <title>Unexplained CSV Whitespace</title>
+        <description>&lt;p&gt;&lt;strong&gt;TLDR&lt;/strong&gt;: Blank lines in a &lt;code class=&quot;highlighter-rouge&quot;&gt;.csv.erb&lt;/code&gt; template render as whitespace in the final CSV output.&lt;/p&gt;
+
+&lt;p&gt;Using the method I &lt;a href=&quot;https://jonathanpike.net/2016/09/Exporting-CSV-From-Rails&quot;&gt;described&lt;/a&gt; for exporting CSV, I created a new template and was testing it.  When I downloaded the CSV file and opened it, it appeared that the file was empty.  What was going on? I noticed that the scroll bar was rather long, so I started scrolling… and scrolling… and scrolling, down 1369 lines.  There’s the data. Then, I looked at the total lines in the file:  2738, which is double 1369.  It appears that, somewhere, I was inserting 1368 blank lines into the file prior to the data being written.&lt;/p&gt;
+
+&lt;p&gt;I started debugging my &lt;code class=&quot;highlighter-rouge&quot;&gt;.csv.erb&lt;/code&gt; template to see where this whitespace was coming from.  First, I set a breakpoint in the template right before rendering the CSV.  Ruby’s CSV library wraps a string in a CSV object, and I could verify that the string had no whitespace.&lt;/p&gt;
+
+&lt;p&gt;Next, I started removing elements from the CSV template until I found the culprit.  What I found was that an entire section of the CSV document was where the problem was happening. No matter what subsection of that section I removed, the issue would still persist.  If I removed the entire thing, the output would begin at line one.&lt;/p&gt;
+
+&lt;p&gt;Finally, I decided to try something that I thought was crazy: I had defined a few variables in ERB tags earlier in the document, and I had inserted a blank line between each of these for readability.  What if I removed those?  The output began at line one. Bingo! Not so crazy after all!&lt;/p&gt;
+
+&lt;p&gt;If you have more whitespace than you bargained for in CSV output and are using a &lt;code class=&quot;highlighter-rouge&quot;&gt;.csv.erb&lt;/code&gt; view template, check for blank lines. These could be the culprit.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 27 Feb 2017 09:30:00 -0500</pubDate>
+        <link>https://www.jonathanpike.net/2017/02/Unexplained-CSV-Whitespace</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2017/02/Unexplained-CSV-Whitespace</guid>
+      </item>
+    
+      <item>
+        <title>Exporting CSV From Rails In Multiple Formats</title>
+        <description>&lt;p&gt;Exporting data from Rails to be used in different applications can be a tricky topic.  What format do you need to export to?  What if one export needs some data and another export needs other data?  I had to solve exactly this problem with CSV.  Ruby has an excellent &lt;a href=&quot;http://ruby-doc.org/stdlib-2.3.0/libdoc/csv/rdoc/CSV.html&quot;&gt;CSV Library&lt;/a&gt; that is ripe for use with Rails.  From my research, there are 2 basic ways of exporting CSV data from a Rails application that I have come across so far:  &lt;a href=&quot;https://www.lockyy.com/posts/rails-4/exporting-csv-files-in-rails&quot;&gt;calling &lt;code class=&quot;highlighter-rouge&quot;&gt;to_csv&lt;/code&gt; on a model object in the Controller&lt;/a&gt; and &lt;a href=&quot;http://nithinbekal.com/posts/rails-csv-export/&quot;&gt;generating CSV directly in the view&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Calling &lt;code class=&quot;highlighter-rouge&quot;&gt;to_csv&lt;/code&gt; is a great option if you only ever need the CSV data in one format.  My problem was more complex:  I needed to allow the user to choose what format the CSV data was exported in, and then provide it in that format.  To solve this problem, I chose to render the CSV in the view.  Here’s how I did it:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The Controller&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Rails controller actions respond to HTML by default.  Luckly, setting up your controller to respond to CSV is really easy using &lt;a href=&quot;http://api.rubyonrails.org/classes/ActionController/MimeResponds.html#method-i-respond_to&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ActionController::MimeResponds#respond_to&lt;/code&gt;&lt;/a&gt;, as follows:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;index&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;# Standard model queries here...&lt;/span&gt;
+	
+	&lt;span class=&quot;vi&quot;&gt;@template&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;params&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+	
+	&lt;span class=&quot;n&quot;&gt;respond_to&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+		&lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;html&lt;/span&gt;
+		&lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;csv&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;render&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;template: &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;path/to/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;vi&quot;&gt;@template&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The most important portion of the &lt;code class=&quot;highlighter-rouge&quot;&gt;index&lt;/code&gt; action is the &lt;code class=&quot;highlighter-rouge&quot;&gt;@template&lt;/code&gt; variable.  When the user chooses what format they would like the CSV exported as, the download link provides a param that tells the controller what  CSV template to render.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bonus Tip:&lt;/strong&gt; Optionally, you can also set the &lt;code class=&quot;highlighter-rouge&quot;&gt;Content-Disposition&lt;/code&gt; header to make the CSV file download automatically and set a file name, like so:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;csv&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; 
+	&lt;span class=&quot;n&quot;&gt;headers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Content-Disposition'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;attachment;filename=Your-File-Name-Here.csv&quot;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;render&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;template: &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;path/to/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;vi&quot;&gt;@template&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;The View&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Here’s where Ruby’s CSV Library comes in handy.  Create as many CSV templates (in &lt;code class=&quot;highlighter-rouge&quot;&gt;csv.erb&lt;/code&gt; format, so you can embed Ruby directly in the template) as you need and save them wherever it makes sense.  They will each look something like this (obviously, with variation in the data displayed):&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;% export &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;CSV&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;generate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot; &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;headers: &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Array&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Of&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Headers&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;write_headers: &lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;encoding: &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;UTF-8}) do |csv| %&amp;gt; 
+	&amp;lt;% csv.add_row data %&amp;gt; 
+&amp;lt;% end %&amp;gt;
+&amp;lt;%= export.lstrip.html_safe %&amp;gt; 
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Let me explain what’s going on:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;export&lt;/code&gt; variable is set to &lt;a href=&quot;http://ruby-doc.org/stdlib-2.3.0/libdoc/csv/rdoc/CSV.html#method-c-generate&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CSV.generate&lt;/code&gt;&lt;/a&gt;.  This is the method that will be generating the actual CSV string that the user has requested.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CSV.generate&lt;/code&gt; takes 2 arguments: a string and a hash of options.  I’ve passed a blank string and provided &lt;code class=&quot;highlighter-rouge&quot;&gt;headers&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;write_headers&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;encoding&lt;/code&gt; as options. &lt;code class=&quot;highlighter-rouge&quot;&gt;headers&lt;/code&gt; is the content of the top row of your CSV file, and can be either an array of strings or a string separated by commas.  &lt;code class=&quot;highlighter-rouge&quot;&gt;write_headers&lt;/code&gt; specifies that the headers should be added to the CSV output (optional – &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt; by default).  &lt;code class=&quot;highlighter-rouge&quot;&gt;encoding&lt;/code&gt; allows you to specify an encoding for the file (also optional – I’ve chosen UTF-8).&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CSV.generate&lt;/code&gt; takes a block, in which you pass in the rows you actually want to add to the output.  You can iterate over your data however you normally would in a view file in this block, and then pass the result to &lt;code class=&quot;highlighter-rouge&quot;&gt;csv.add_row&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;I explicitly have not printed anything in the view file until the last line.  If the last line was left out, the CSV download would be a blank file.  This is optional (you can alternatively remove the &lt;code class=&quot;highlighter-rouge&quot;&gt;export&lt;/code&gt; variable and call &lt;code class=&quot;highlighter-rouge&quot;&gt;CSV.generate&lt;/code&gt; in &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;%= %&amp;gt;&lt;/code&gt; tags).  I did it this way because:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;My own CSV exports required that no blank lines be present in the export.  I am calling &lt;code class=&quot;highlighter-rouge&quot;&gt;lstrip&lt;/code&gt; because I found that a &lt;code class=&quot;highlighter-rouge&quot;&gt;0A&lt;/code&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;LF&lt;/code&gt;) character was being prepended to my CSV string, inexplicably.&lt;/li&gt;
+  &lt;li&gt;I am calling &lt;code class=&quot;highlighter-rouge&quot;&gt;html_safe&lt;/code&gt; to avoid HTML escaping in the output.  This should only be done if your data is known safe.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;The Link&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Now, when your user is given the option to select a CSV download, you can provide options that will provide the name of your CSV template to your controller.  I implemented this by using a &lt;a href=&quot;http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html#method-i-select_tag&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;select_tag&lt;/code&gt;&lt;/a&gt; together with &lt;a href=&quot;http://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html#method-i-options_for_select&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;options_for_select&lt;/code&gt;&lt;/a&gt; that gathered the options from a Hash I provided.  You can use whatever method provides the correct param to your controller.&lt;/p&gt;
+
+&lt;p&gt;In just a few lines of code, Ruby and Rails provide everything needed to create a very flexible CSV exporting system. Hope this helps with your CSV exporting needs!&lt;/p&gt;
+</description>
+        <pubDate>Wed, 28 Sep 2016 08:30:26 -0400</pubDate>
+        <link>https://www.jonathanpike.net/2016/09/Exporting-CSV-From-Rails</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2016/09/Exporting-CSV-From-Rails</guid>
+      </item>
+    
+      <item>
+        <title>Choosing the Firehose Project</title>
+        <description>&lt;p&gt;It’s been almost a year since I enrolled and started down the path to change my career with &lt;a href=&quot;http://www.thefirehoseproject.com&quot;&gt;the Firehose Project&lt;/a&gt;.  While I’ve talked about my experience &lt;a href=&quot;https://jonathanpike.net/2016/06/Bootcamp-Student-to-Junior-Developer&quot;&gt;finding my first developer job&lt;/a&gt;, I haven’t talked about why I chose the Firehose Project.&lt;/p&gt;
+
+&lt;p&gt;Back in early 2015, I knew I wanted to transition my career into the tech industry, but I didn’t know exactly how.  I had just completed my &lt;a href=&quot;https://certification.comptia.org/certifications/a&quot;&gt;CompTIA A+&lt;/a&gt; certification, a process that made me realize I would prefer being a developer to being an IT professional.  The only problem: developers need to have a degree in Computer Science, right?  I couldn’t afford to go back to University for another 4 year degree in either time or money.  Shortly after desparing that I could never become a developer, something amazing happened:  I was introduced to programming bootcamps.&lt;/p&gt;
+
+&lt;p&gt;I attended an info session for &lt;a href=&quot;https://www.bloc.io&quot;&gt;Bloc&lt;/a&gt; in April 2015 that really pumped me up.  I could become a developer without having to spend 4 years in Univeristy and tens of thousands of dollars on tuition!  My son was just 1.5 months old at this point, and he needed the time that I would otherswise have to spend working on bootcamp curriculum.  I promised myself I would join a bootcamp in September 2015, when my son would be 6 months old.  I spent the intervening months researching the bootcamp I would join.  &lt;a href=&quot;http://learntocodewith.me/posts/online-coding-bootcamps/&quot;&gt;The Most Epic Guide to Online Coding Bootcamps, Ever&lt;/a&gt; by &lt;a href=&quot;http://learntocodewith.me/about/&quot;&gt;Laurence Bradford&lt;/a&gt; coupled with &lt;a href=&quot;https://www.coursereport.com&quot;&gt;Course Report&lt;/a&gt; helped me make a difficult call.  While many other bootcamps seemed like they were good, the Firehose Project stood out because they taught algorithms in addition to the regular Rails curriculum. In the end, I chose Firehose because:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The curriculum covered computer science fundamentals in addition to web development, keeping the changing framework material grounded in unchanging fundamental material and giving me a deeper understanding of how the frameworks work;&lt;/li&gt;
+  &lt;li&gt;The time commitment (15 weeks, at that time) was shorter than other bootcamps, but didn’t skimp on ground covered; and&lt;/li&gt;
+  &lt;li&gt;The price ($4,000, at that time) was more affordable than other bootcamps.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;During my 15 weeks, I learned a ton at a surprising pace: literally drinking from a firehose.  Some of the best moments include:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Building the first tutorial application, &lt;a href=&quot;https://splurty-jonathan-pike.herokuapp.com&quot;&gt;Splurty&lt;/a&gt;. Firehose is set up to give you quick wins, providing motivation to continue learning.  It felt so good getting my development environment set up, generating a new Rails application, writing my first MVC code, typing &lt;code class=&quot;highlighter-rouge&quot;&gt;rails server&lt;/code&gt;, and seeing the results instantly in my browser.  Even more so when I could share what I built after getting it running on Heroku.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The sessions I had with my mentor, &lt;a href=&quot;http://www.jefferydurand.com&quot;&gt;Jeff&lt;/a&gt;, were informative, challenging, and really, really fun.  I prepared questions throughout the week as I went through the course material, and Jeff would go over everything with me on Sunday evenings.  He went out of his way to be helpful to me, often going over the alloted 1 hour time period we had.  Jeff is a really great mentor and developer – he never ceased to amaze me with his deep knowledge of practically any question that I could throw at him.  I can trace many of my major successes to our sessions.  I’m sure that the other Firehose mentors are of equal caliber.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The group project at the end of the program was worth the cost of the entire course.  Being put into a group of 4 other developers and told to build a &lt;a href=&quot;http://endgame-chess.herokuapp.com&quot;&gt;chess application&lt;/a&gt; from scratch together was an awesome experience.  From going deeper into the Rails API and building out a database structure (including using &lt;a href=&quot;http://eewang.github.io/blog/2013/03/12/how-and-when-to-use-single-table-inheritance-in-rails/&quot;&gt;single table inheritance&lt;/a&gt;), to pair programming with multiple members of the team using &lt;a href=&quot;https://screenhero.com&quot;&gt;Screenhero&lt;/a&gt;, to solving complex problems and testing our solutions with TDD, this project had it all.  It really gave me the opportunity to stretch my new developer wings and gain the confidence necessary to be able to go out into the world and present myself as a capable junior developer when it came time to look for jobs. Our team mentor, Travis, was a fantastic teacher and obviously very passionate about coding, and the weekly standups we had with him were great.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;After graduation, I was supported by both Jeff and Travis, receiving feedback and advice about building my resume and how to ace the interview.  Just a few months later, I achieved my goal and became a professional developer.&lt;/p&gt;
+
+&lt;p&gt;In the months since starting my job, I’ve learned a ton more and have improved my skills a hundredfold.  And because of the fantastic foundation that the Firehose Project gave me, I’m confident that I’ll continue to learn more and grow to be a better developer.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 21 Aug 2016 12:27:26 -0400</pubDate>
+        <link>https://www.jonathanpike.net/2016/08/Choosing-the-Firehose-Project</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2016/08/Choosing-the-Firehose-Project</guid>
+      </item>
+    
+      <item>
+        <title>Bootcamp Student to Junior Developer</title>
+        <description>&lt;p&gt;Going from feeling &lt;a href=&quot;https://jonathanpike.net/2016/03/Not-Smart-Enough&quot;&gt;not smart enough to be a programmer&lt;/a&gt; to being a &lt;a href=&quot;http://www.thefirehoseproject.com/&quot;&gt;programming bootcamp&lt;/a&gt; student was a big change.  Getting my development environment set up, starting the initial lessons, and becoming part of the Firehose Community all produced a sense of relief and joy.  I was finally on the path to becoming a developer!  Fast forward 15 weeks and I actually was a developer.  I had completed my assigned tasks on the group &lt;a href=&quot;http://endgame-chess.herokuapp.com&quot;&gt;chess application&lt;/a&gt; and felt very proud of the results. My next challenge was to face the great unknown: the job market for bootcamp graduates.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Resume&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;My first task was to polish up my resume and include my new programming knowledge and experience. I also decided to build a simple &lt;a href=&quot;http://jonathanpike.net/resume/&quot;&gt;resume page&lt;/a&gt; on this site to display it.  After all, I’m a web developer – making a page for my resume seemed like the obvious thing to do.  After completing my resume, I solicited feedback from my mentors.  That was a fantastic decision, and I encourage you to do the same.  Some of the advice that I got was:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Remember your audience&lt;/strong&gt;. A technical hiring manager is someone who is, at very least, familiar with things like Rails or a pull request, making explanations of such things unnecessary.  Don’t waste words (and space) on something that isn’t helping the hiring manager make a decision about whether you’re right for the job.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Make it easy for the hiring manager&lt;/strong&gt;.  Your resume is your first point of entry into an organization, not the end-all-be-all of you getting hired.  Pay attention to what the job requirements are and check as many of those boxes as you have skills and experience.  Make it easy for the hiring manager to move your resume to the yes pile for the next round.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Be honest&lt;/strong&gt;.  Don’t proclaim that you “know” something just because you’ve used it once, but don’t be afraid to say where your interests lie and what you’re currently learning.  Being a developer means you’re in for a career of constant learning and growing.  Show your curiosity.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;The more the merrier&lt;/strong&gt;. Another great decision I made was to not limit myself to a single resume location.  I mirrored the information in my resume to &lt;a href=&quot;https://ca.linkedin.com/in/pikejonathan&quot;&gt;LinkedIn&lt;/a&gt; and &lt;a href=&quot;http://stackoverflow.com/cv/jonathanpike&quot;&gt;Stack Overflow Careers&lt;/a&gt;, allowing more potential employers to stumble accross one of my profiles.  One benefit of the latter was that it also produced a nice PDF to submit via e-mail, for employers who wanted that.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Job Hunting&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Once my resume was ready, I took to looking for jobs.  My approach here was not very scientific: visit a few job boards daily that good companies advertised on, make a list of all the positions that sounded interesting, and apply to those positions on my list.  My favourite job boards were:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;http://stackoverflow.com/jobs&quot;&gt;Stack Overflow Jobs&lt;/a&gt;.  This was my most used job board.  There are a lot of companies that post here every day and the filters are great.  If you create a profile, they will also match jobs with your interests and skills automatically.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://weworkremotely.com/&quot;&gt;We Work Remotely&lt;/a&gt;.  This board is &lt;em&gt;the&lt;/em&gt; board to look at for remote work.  There are fewer listings, but they’re all guaranteed to actually be hiring remotely.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.themuse.com/jobs&quot;&gt;The Muse Jobs&lt;/a&gt;.  The “Filter Jobs” feature on this board is great to look at larger companies in your area.  The profiles they have of the companies you’re looking at are the best feature here.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Around the time I started looking for a job, &lt;a href=&quot;http://cobyism.com/remotejobseeker/&quot;&gt;The Complete Remote Jobseeker’s Handbook&lt;/a&gt;, an eBook from &lt;a href=&quot;https://github.com/cobyism&quot;&gt;Coby Chapple&lt;/a&gt; (a designer at GitHub), was fortuitously released.  This eBook is filled with great information for seeking remote work, including the benefits (and curses) of being a remote worker, lists of high quality job boards to look for remote work, strategies for applying for jobs (this was applicable to any job hunting, remote or not), and interviewing tips.  My biggest takeaway from the book was that the interviewer &lt;strong&gt;wants you to succeed&lt;/strong&gt;: finding and interviewing candidates is as much work for a company as applying and interviewing is for you.  If you’re the right person for the job, their work is over, as is yours.  It’s win-win!&lt;/p&gt;
+
+&lt;p&gt;Another resource I found helpful was &lt;a href=&quot;https://www.interviewcake.com&quot;&gt;Interview Cake&lt;/a&gt;, a site that promises to teach you to be good at programming interviews.  While I didn’t actually face many technical challenges in the interviews I completed, this site was a great confidence booster as I realized that I was a better problem solver than I thought. And I learned a lot from the practice problems too!  Well worth the cost of admission.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Applying for Jobs&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;During my job hunt, I kept a detailed spreadsheet of the companies I applied for (including a copy of the job description, the date I applied, and the title of the job).  From late January to early April, I applied for &lt;strong&gt;23&lt;/strong&gt; jobs, which lead to &lt;strong&gt;4&lt;/strong&gt; interviews.  Early on, I spent a lot of time crafting a unique cover letter to each position I applied for, which meant that I was only applying to 2 positions a week (or less, depending on the time I had to spend on applications).  I asked &lt;a href=&quot;https://github.com/kenmazaika&quot;&gt;Ken Mazaika&lt;/a&gt; for some advice as I was going along, and he suggested I focus on a higher volume of applications, as (he estimated) that you have around a 10% chance of getting a response from companies for a junior role.  I took his advice and used the cover letters that I had already written to prepare a template.  This enabled me to apply to 5 or 6 a week (at peak).&lt;/p&gt;
+
+&lt;p&gt;Of the interviews I had, &lt;strong&gt;2&lt;/strong&gt; were telephone screens and &lt;strong&gt;2&lt;/strong&gt; were in person interviews.  When it came to technical challenges, one of the telephone screens had me answering basic object oriented programming and responsive web design questions and one of the in person interviews had me filling out a general web development quiz.  I never had the dreaded whiteboard interview (whew!).  I was also given one take home assignment: building a simple &lt;a href=&quot;http://wc-todo.herokuapp.com&quot;&gt;to do app&lt;/a&gt; with the technology of my choice.&lt;/p&gt;
+
+&lt;p&gt;A real surprise came when I was contacted on LinkedIn about a potential job opportunity – a company in Toronto was hiring Rails developers, and the recruiter noticed I had some experience with Ruby and Rails.  After a phone screen, 2 in person interviews, and a take home assignment, I was given a job offer from &lt;a href=&quot;http://www.bioconnect.com&quot;&gt;BioConnect&lt;/a&gt; to work on their Rails time and attendance application, &lt;a href=&quot;http://www.teamworks.cloud&quot;&gt;TeamWorks&lt;/a&gt;.  I accepted that offer and have been working on TeamWorks since the end of May.  My first month as a software developer has been better than I ever could have expected.  I work with a great team, I’ve been given the opportunity to learn a lot of new things, and I’m doing something that I really enjoy.&lt;/p&gt;
+
+&lt;p&gt;If you’re currently in a bootcamp program, fear not about the great unknown of the job market.  You may face a lot of rejection (or be ignored) on the road to getting your first job, and you may feel out of your league at times.  Keep looking for the next big opportunity, keep seeking advice from mentors, and (most of all) keep coding!&lt;/p&gt;
+</description>
+        <pubDate>Wed, 22 Jun 2016 21:04:05 -0400</pubDate>
+        <link>https://www.jonathanpike.net/2016/06/Bootcamp-Student-to-Junior-Developer</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2016/06/Bootcamp-Student-to-Junior-Developer</guid>
+      </item>
+    
+      <item>
+        <title>I'm not smart enough to be a programmer.</title>
+        <description>&lt;p&gt;That thought burned through my brain as I decided on a major for university.  I should have been a shoe in as a computer science major – I spent all of my free time noodling on my computer at home and I was one of (only) 4 students in my high school’s computer science class.  I was a classic computer nerd.  And I loved high school computer science class!  But my internal negative self-talk convinced me that I was no good at math and to be a computer science major (and a programmer), you needed to be “good at math”.  I instead chose to study business (pragmatically, for transferable skills) and political science (as an interest).&lt;/p&gt;
+
+&lt;p&gt;Years later, I discovered &lt;a href=&quot;https://www.codecademy.com&quot;&gt;Codecademy&lt;/a&gt; and got started learning Python.  I chose Python simply because I had heard of it before. After completing all of what Codecademy had to offer, I realized that programming wasn’t insanely hard.  There were rules and patterns and syntax, but it was learnable.  And I wanted to learn more!  A lot of individuals on Stack Overflow and Reddit suggested &lt;a href=&quot;http://learnpythonthehardway.org/&quot;&gt;Learn Python the Hard Way&lt;/a&gt;, which I started but never really got into. Yet, I started thinking of myself as a programmer and deeply desired to learn more and get better.&lt;/p&gt;
+
+&lt;p&gt;I knew that I couldn’t afford to go back to school, especially since I had (and still have) a young family, but I felt overwhelmed at the volume of knowledge that was out there to absorb.  Then I discovered coding bootcamps: organizations solely devoted to teaching new programmers the basic tools of the trade, preparing them to become capable junior developers.  I did some research, settled on &lt;a href=&quot;thefirehoseproject.com&quot;&gt;The Firehose Project&lt;/a&gt; and didn’t look back.&lt;/p&gt;
+
+&lt;p&gt;For anyone out there who is thinking of becoming a programmer but has the nagging thought &lt;em&gt;“but I’m not smart enough”&lt;/em&gt;, let me be the first to tell you that you &lt;em&gt;are&lt;/em&gt; smart enough.  Computer science is an incredibly broad field.  Not every programmer is devoted to discovering new algorithms and optimizing the speed of compilers.  But if that’s something that you find you enjoy, its something you can devote your entire career too.&lt;/p&gt;
+
+&lt;p&gt;My biggest piece of advice for anyone interested: just get started programming!  You’ll quickly discover 2 things:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Do I like this?&lt;/li&gt;
+  &lt;li&gt;If so, where is my niche?&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;If you do end up liking programming, you’re on the start of a fun, frustrating, and ultimately rewarding path.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Further Listening&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I was inspired to write this post after listening to &lt;a href=&quot;https://www.relay.fm/radar/6&quot;&gt;Episode 6&lt;/a&gt; of &lt;a href=&quot;https://www.relay.fm/radar&quot;&gt;Under the Radar&lt;/a&gt;, a weekly podcast from &lt;a href=&quot;marco.org&quot;&gt;Marco Arment&lt;/a&gt; and &lt;a href=&quot;https://david-smith.org/&quot;&gt;David Smith&lt;/a&gt; about independant app development that’s never longer than 30 minutes.  I highly recommend listening to it.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 09 Mar 2016 13:35:00 -0500</pubDate>
+        <link>https://www.jonathanpike.net/2016/03/Not-Smart-Enough</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2016/03/Not-Smart-Enough</guid>
+      </item>
+    
+      <item>
+        <title>Real Time Chess with Action Cable</title>
+        <description>&lt;p&gt;After having built a &lt;a href=&quot;http://endgame-chess.herokuapp.com&quot;&gt;chess appliction&lt;/a&gt; with a &lt;a href=&quot;https://pusher.com/&quot;&gt;real time component&lt;/a&gt;, this demo was right up my alley. The abstraction of channels and subscriptions (combined with JavaScript callbacks) will still take some getting used to, but I found the author did a good job of explaining everything in an understandable way.&lt;/p&gt;
+
+&lt;p&gt;After reading &lt;a href=&quot;https://samsaffron.com/archive/2015/12/29/websockets-caution-required&quot;&gt;Websockets, caution required!&lt;/a&gt; from Sam Saffron, Websockets seem to have a lot of limitations, some of which are addressed by HTTP/2. It will be interesting to see how the real time landscape changes in the next few years.&lt;/p&gt;
+</description>
+        <pubDate>Fri, 26 Feb 2016 06:17:26 -0500</pubDate>
+        <link>https://www.jonathanpike.net/2016/02/Real-Time-Chess-Action-Cable</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2016/02/Real-Time-Chess-Action-Cable</guid>
+      </item>
+    
+      <item>
+        <title>Responding to Ajax with Rails</title>
+        <description>&lt;p&gt;After showing &lt;a href=&quot;https://jonathanpike.net/2016/02/Ajax-on-Rails&quot;&gt;how easy it is to use Ajax with Rails&lt;/a&gt; and &lt;a href=&quot;https://jonathanpike.net/2016/02/Diving-into-jQuery-UJS&quot;&gt;how Rails makes Ajax easy behind the scenes&lt;/a&gt;, the one thing left to explore is what Rails doesn’t do for you: responding to the Ajax request.&lt;/p&gt;
+
+&lt;p&gt;When I last showed my &lt;a href=&quot;http://wc-todo.herokuapp.com/&quot;&gt;To Do app&lt;/a&gt;, I skipped responding to the Ajax request from the server using a trick:&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;.my-form, #completed, .delete, .all-complete, .clear&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;ajax:success&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;location&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;reload&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Using the &lt;code class=&quot;highlighter-rouge&quot;&gt;ajax:success&lt;/code&gt; callback, I reloaded the window to show the changes that were made by the Ajax request.  This required a reload for every action, which isn’t efficient.  This week, I went back to my application  and figured out how to properly have Rails respond to the Ajax request without a page reload.  This required changes to the Controller and the View.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The Controller&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The Controller is responsible for receiving requests from the user and updating the model and view appropriately.  Since Ajax is making the request via JavaScript, the Controller needs to be able to respond back with JavaScript.  Here are the changes that I needed to make to my Controller to allow it to do just that, followed by an explanation of what’s happening:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;TodosController&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ApplicationController&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;respond_to&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:js&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:html&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:json&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;before_action&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:find_all&lt;/span&gt;
+
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+
+  &lt;span class=&quot;nf&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;create&lt;/span&gt;
+    &lt;span class=&quot;vi&quot;&gt;@todo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Todo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;todo_params&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;flash&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Something went wrong. Please try again.&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;unless&lt;/span&gt; &lt;span class=&quot;vi&quot;&gt;@todo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;save&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;respond_with&lt;/span&gt; &lt;span class=&quot;vi&quot;&gt;@todo&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+
+  &lt;span class=&quot;nf&quot;&gt;private&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;todo_params&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;params&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:todo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;permit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:session_user_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+
+  &lt;span class=&quot;nf&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;find_all&lt;/span&gt;
+    &lt;span class=&quot;vi&quot;&gt;@todos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Todo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;where&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;session_user_id: &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;session_user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;created_at: :asc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;A few things to note:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;In line 2, I’ve specified that the Controller can &lt;code class=&quot;highlighter-rouge&quot;&gt;respond_to&lt;/code&gt; HTML (a regular request), JavaScript, and JSON.  Setting &lt;code class=&quot;highlighter-rouge&quot;&gt;respond_to&lt;/code&gt; at the top of the Controller allows every action in the Controller to respond to those types of requests.&lt;/li&gt;
+  &lt;li&gt;I also have a &lt;code class=&quot;highlighter-rouge&quot;&gt;before_action&lt;/code&gt; for the &lt;code class=&quot;highlighter-rouge&quot;&gt;find_all&lt;/code&gt; method (defined at the bottom of the controller), which is a helper method to load all of the current user’s To Dos from the database for each action.  You’ll see why this is important later.&lt;/li&gt;
+  &lt;li&gt;I am using &lt;code class=&quot;highlighter-rouge&quot;&gt;respond_with&lt;/code&gt; in the &lt;code class=&quot;highlighter-rouge&quot;&gt;create&lt;/code&gt; action, which isn’t a standard Rails method (anymore).  Since Rails 4.2, the &lt;a href=&quot;https://github.com/plataformatec/responders&quot;&gt;responders gem&lt;/a&gt; has to be included in order to get this functionality.  &lt;code class=&quot;highlighter-rouge&quot;&gt;respond_with&lt;/code&gt; does 2 things:  1) it allows Rails to choose the type of response to send back automatically given the request, and 2) it is a convenient short form including the the following code in every action that needs to respond to something other than a normal request:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;respond_to&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;redirect_to&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;root_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;js&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Now that Rails knows how respond to JavaScript, we have to actually write the JavaScript to respond with.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The View&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Rails expects a file in the views directory with the same name as the controller action and the same extension as the type of response.  To respond to the &lt;code class=&quot;highlighter-rouge&quot;&gt;create&lt;/code&gt; action with JavaScript, we need to make &lt;code class=&quot;highlighter-rouge&quot;&gt;create.js.erb&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'.todos'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;%= j render partial: 'todos' %&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;lt;%&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;flash&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;#flash-messages&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;%= j content_tag :p, message.html_safe, class: &quot;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;flash&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;center&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot; %&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;delay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fadeOut&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;slow&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;lt;%&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;end&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Let me explain what is happening:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;If the Ajax request is successful, the controller responds with this file, which will re-render the &lt;a href=&quot;https://github.com/jonathanpike/wc-todo/blob/master/app/views/todos/_todos.html.erb&quot;&gt;todos partial&lt;/a&gt;.  This is why I needed to have the &lt;code class=&quot;highlighter-rouge&quot;&gt;before_action&lt;/code&gt; in the controller load all of my todos from the database. The &lt;code class=&quot;highlighter-rouge&quot;&gt;j&lt;/code&gt; method is an alias for &lt;a href=&quot;http://api.rubyonrails.org/classes/ActionView/Helpers/JavaScriptHelper.html#method-i-j&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;escape_javascript&lt;/code&gt;&lt;/a&gt;, which performs &lt;a href=&quot;http://stackoverflow.com/a/1623813/5639584&quot;&gt;2 important functions when responding with JavaScript&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;If the Ajax request doesn’t pass validation (and therefore doesn’t save to the database), I’ve set &lt;code class=&quot;highlighter-rouge&quot;&gt;flash[:alert]&lt;/code&gt; to have a message.  The flash block will loop through the flash hash and then put the message in a &lt;code class=&quot;highlighter-rouge&quot;&gt;p&lt;/code&gt; tag (inside of a &lt;code class=&quot;highlighter-rouge&quot;&gt;div&lt;/code&gt; with the ID &lt;code class=&quot;highlighter-rouge&quot;&gt;flash-messages&lt;/code&gt;).  You’ll see I’ve set it to &lt;code class=&quot;highlighter-rouge&quot;&gt;fadeOut&lt;/code&gt; after 3 seconds (because the page won’t get refreshed to get rid of it).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;em&gt;This is not the only way to write the response template&lt;/em&gt;.  For example, you could append the individual new To Do to the to &lt;code class=&quot;highlighter-rouge&quot;&gt;.todo-list&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;ul&lt;/code&gt; instead of re-rendering the partial.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Putting it All Together&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Here is the chain of events that happens when a To Do is added:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;A user fills out the form and clicks the “Add New To Do” button.  This submits the form via Ajax (thanks &lt;code class=&quot;highlighter-rouge&quot;&gt;remote: true&lt;/code&gt;!).&lt;/li&gt;
+  &lt;li&gt;The Todos Controller receives the request, and saves the To Do to the database (since it passes the validation).  It will also load all of the To Dos into the instance variable &lt;code class=&quot;highlighter-rouge&quot;&gt;@todos&lt;/code&gt; to be accessible in the view.  Then, it responds with the &lt;code class=&quot;highlighter-rouge&quot;&gt;create.js.erb&lt;/code&gt; view template.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;create.js.erb&lt;/code&gt; renders the &lt;code class=&quot;highlighter-rouge&quot;&gt;todos.html.erb&lt;/code&gt; partial, which now includes the newly added To Do.  You now see your new To Do added to the page.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;All of this happened without the page being refreshed.  Awesome!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Further Reading&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Figuring out how to respond from the server wasn’t intuitive to me, and involved a lot of trial and error.  Here are some of the resources I used to help me understand how this all works:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.alfajango.com/blog/rails-3-remote-links-and-forms/&quot;&gt;Alfa Jango - Rails 3 Remote Links and Forms: A Definitive Guide&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.alfajango.com/blog/rails-3-remote-links-and-forms-data-type-with-jquery/&quot;&gt;Alfa Jango - Rails 3 Remote Links and Forms Part 2: Data-Type (with jQuery)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://code.tutsplus.com/tutorials/using-unobtrusive-javascript-and-ajax-with-rails-3--net-15243&quot;&gt;Tuts+ - Using Unobtrusive JavaScript and AJAX with Rails 3&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.justinweiss.com/articles/respond-to-without-all-the-pain/&quot;&gt;Justin Weiss - &lt;code class=&quot;highlighter-rouge&quot;&gt;respond_to&lt;/code&gt; Without All the Pain&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://edgeguides.rubyonrails.org/working_with_javascript_in_rails.html&quot;&gt;Rails Edge Guide - Working with JavaScript in Rails&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        <pubDate>Wed, 24 Feb 2016 05:37:57 -0500</pubDate>
+        <link>https://www.jonathanpike.net/2016/02/Responding-to-Ajax</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2016/02/Responding-to-Ajax</guid>
+      </item>
+    
+      <item>
+        <title>CloudFlare’s Universal SSL</title>
+        <description>&lt;p&gt;I immediately signed up for CloudFlare once I read this post.  It took about 5 minutes to set up, and about 3 hours to propagate through the DNS network.  CloudFlare backed sites also have the benefit of being &lt;a href=&quot;https://www.nateberkopec.com/2016/01/07/what-http2-means-for-ruby-developers.html&quot;&gt;served with HTTP/2&lt;/a&gt;. And did I mention that CloudFlare has a free plan?&lt;/p&gt;
+</description>
+        <pubDate>Fri, 19 Feb 2016 19:25:17 -0500</pubDate>
+        <link>https://www.jonathanpike.net/2016/02/Configuring-Cloudflare</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2016/02/Configuring-Cloudflare</guid>
+      </item>
+    
+      <item>
+        <title>Diving into jQuery-UJS</title>
+        <description>&lt;p&gt;&lt;a href=&quot;http://jonathanpike.net/2016/02/Ajax-on-Rails&quot;&gt;Last week&lt;/a&gt;, I gave a quick demonstration of how easy Ajax is with Rails.  Knowing to include &lt;code class=&quot;highlighter-rouge&quot;&gt;remote: true&lt;/code&gt; when using certain Rails helpers is only the first step.  In an effort to dispel the “magical” reputation that Rails has, I’m going to take a dive into &lt;a href=&quot;https://github.com/rails/jquery-ujs&quot;&gt;jQuery-UJS&lt;/a&gt; to show exactly how Rails makes Ajax so easy.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What is Unobtrusive JavaScript, Anyways?&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;First, a note about the name.  UJS in jQuery-UJS stands for “unobtrusive JavaScript”, which the &lt;a href=&quot;http://edgeguides.rubyonrails.org/working_with_javascript_in_rails.html&quot;&gt;Rails Guide&lt;/a&gt; tells me is generally regarded as a best practice for writing JavaScript.  Consider the following example&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;#&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;onclick=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;this.style.backgroundColor='#990000'&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;Paint it red&lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The background will change to red when the link is clicked, which is exactly what I want.  If I wanted to have another link do the same thing, however, I would have to copy the same inline JavaScript, which quickly would untenable to maintain and not DRY.&lt;/p&gt;
+
+&lt;p&gt;Unobtrusive JavaScript has 2 main principals:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Separate JavaScript from HTML&lt;/li&gt;
+  &lt;li&gt;Keep JavaScript DRY by passing information from HTML using data-* attributes.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Here’s the same code as above, made unobtrusive:&lt;/p&gt;
+
+&lt;div class=&quot;language-coffeescript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;vi&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;paintIt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;backgroundColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;backgroundColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;backgroundColor&lt;/span&gt;
+ 
+&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;a[data-background-color]&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;click&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;preventDefault&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+ 
+    &lt;span class=&quot;nx&quot;&gt;backgroundColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;background-color&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;paintIt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;backgroundColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;#&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;data-background-color=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;#990000&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;Paint it red&lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;#&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;data-background-color=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;#009900&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;Paint it green&lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;#&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;data-background-color=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;#000099&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;Paint it blue&lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The JavaScript and HTML are separated, which makes both easier to maintain and change.  And with data-* elements, the background color attributes can be passed from the HTML to the JavaScript, allowing a single JavaScript function to change the background colour of any link to any colour the heart desires. And if I want to change the colour in the future, I simply change it in a single place.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;jQuery-UJS and rails.js&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;jQuery-UJS is an “unobtrusive scripting adapter for jQuery” that provides the following features:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;force confirmation dialogs for various actions;&lt;/li&gt;
+  &lt;li&gt;make non-GET requests from hyperlinks;&lt;/li&gt;
+  &lt;li&gt;make forms or hyperlinks submit data asynchronously with Ajax;&lt;/li&gt;
+  &lt;li&gt;have submit buttons become automatically disabled on form submit to prevent double-clicking.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The file that actually does all this is called &lt;a href=&quot;https://github.com/rails/jquery-ujs/blob/master/src/rails.js&quot;&gt;rails.js&lt;/a&gt;.  I’ve included snippets of code below, but please check out rails.js for yourself to explore deeper.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Confusing Elements in rails.js&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;As I was researching and writing this, I had to learn some interesting things about JavaScript and jQuery to understand what rails.js is doing.&lt;/p&gt;
+
+&lt;p&gt;Rails.js starts by creating the &lt;code class=&quot;highlighter-rouge&quot;&gt;$.rails&lt;/code&gt; object.  You’ll note it’s defined like &lt;code class=&quot;highlighter-rouge&quot;&gt;$.rails = rails = { ... };&lt;/code&gt;.  This was a source of some confusion for me.  After testing a similar declaration out in the console, I figured that the double declaration allows both &lt;code class=&quot;highlighter-rouge&quot;&gt;$.rails&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;rails&lt;/code&gt; to be used to reference the functions inside of the object.  I’m not sure why both are needed.&lt;/p&gt;
+
+&lt;p&gt;You will also see some events with &lt;code class=&quot;highlighter-rouge&quot;&gt;.rails&lt;/code&gt; appended, like on this line defining what happens if the element is a form &lt;em&gt;(marked with arrows)&lt;/em&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;$document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;delegate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;formSubmitSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'submit.rails'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Where is the &lt;code class=&quot;highlighter-rouge&quot;&gt;submit.rails&lt;/code&gt; event defined?  As it turns out, there is no difference between the regular &lt;code class=&quot;highlighter-rouge&quot;&gt;submit&lt;/code&gt; event and the &lt;code class=&quot;highlighter-rouge&quot;&gt;submit.rails&lt;/code&gt; event, except that &lt;code class=&quot;highlighter-rouge&quot;&gt;submit.rails&lt;/code&gt; is namespaced.  As such, it can be unbound without unbinding the &lt;code class=&quot;highlighter-rouge&quot;&gt;submit&lt;/code&gt; event.  Handy!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;$.rails&lt;/code&gt; object&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;$.rails&lt;/code&gt; object defines all of the functions that the &lt;a href=&quot;#bindings&quot;&gt;event bindings below&lt;/a&gt; will use to work their Ajax magic.  Since the &lt;code class=&quot;highlighter-rouge&quot;&gt;$.rails&lt;/code&gt; object spans 344 lines, I’m not going to reproduce the whole thing here.  Instead, I’ll point out a few functions that help explain how a form is submitted by simply specifying &lt;code class=&quot;highlighter-rouge&quot;&gt;remote: true&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a name=&quot;isRemote&quot;&gt;&lt;/a&gt;
+&lt;em&gt;isRemote:&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Starting with &lt;code class=&quot;highlighter-rouge&quot;&gt;remote: true&lt;/code&gt; (which is processed into &lt;code class=&quot;highlighter-rouge&quot;&gt;data-remote=&quot;true&quot;&lt;/code&gt;), isRemote allows rails.js to check if the &lt;code class=&quot;highlighter-rouge&quot;&gt;data-remote&lt;/code&gt; attribute is set:&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;isRemote&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'remote'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;undefined&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'remote'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If the &lt;code class=&quot;highlighter-rouge&quot;&gt;data-remote&lt;/code&gt; attribute is not undefined and not false, this function returns &lt;code class=&quot;highlighter-rouge&quot;&gt;true&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a name=&quot;fire&quot;&gt;&lt;/a&gt;
+&lt;em&gt;fire:&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;The fire function checks if there is an event handler that changes the default behaviour of any of the &lt;a href=&quot;https://github.com/rails/jquery-ujs/wiki/ajax&quot;&gt;custom events&lt;/a&gt; that rails.js sets up.&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;fire&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;obj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;obj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;trigger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This function takes an object, a name of an event, and some data, and tests to see if the event works.  Here’s how it works:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;$.Event(name)&lt;/code&gt; creates a new &lt;a href=&quot;https://api.jquery.com/category/events/event-object/&quot;&gt;Event Object&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://api.jquery.com/trigger/&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.trigger()&lt;/code&gt;&lt;/a&gt; calls the new Event Object on the object (in this case, the form element).  Interestingly, &lt;code class=&quot;highlighter-rouge&quot;&gt;.trigger()&lt;/code&gt; will pass on the extra parameters to the event handler, just as if the user naturally triggered the event, which makes it useful with custom Event Objects.&lt;/li&gt;
+  &lt;li&gt;If the result of the event being triggered is true, the function returns true.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a name=&quot;ajax&quot;&gt;&lt;/a&gt;
+&lt;em&gt;ajax:&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;The function that actually handles the Ajax request is incredibly simple:&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;ajax&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ajax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It simply returns &lt;a href=&quot;https://api.jquery.com/jQuery.ajax/&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;jQuery.ajax&lt;/code&gt;&lt;/a&gt; with an options object that will be defined in &lt;a href=&quot;#handleRemote&quot;&gt;handleRemote&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a name=&quot;handleRemote&quot;&gt;&lt;/a&gt;
+&lt;em&gt;handleRemote:&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;If &lt;code class=&quot;highlighter-rouge&quot;&gt;data-remote&lt;/code&gt; is true, how does the data actually get submitted?  The handleRemote function, well, handles it&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;!&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;handleRemote&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;withCredentials&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dataType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ajax:before'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;withCredentials&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'with-credentials'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;dataType&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ajaxSettings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ajaxSettings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dataType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;is&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'form'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;method&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ujs:submit-button-formmethod'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'method'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ujs:submit-button-formaction'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'action'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;serializeArray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// memoized value from clicked submit button&lt;/span&gt;
+      &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;button&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ujs:submit-button'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;button&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;button&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ujs:submit-button'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ujs:submit-button-formmethod'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ujs:submit-button-formaction'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
+
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+        
+    &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;method&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'GET'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;dataType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dataType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// stopping the &quot;ajax:beforeSend&quot; event will cancel the ajax request&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;beforeSend&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;settings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;settings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dataType&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;undefined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;setRequestHeader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'accept'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'*/*;q=0.5, '&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;settings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;accepts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;script&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ajax:beforeSend'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;settings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;trigger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ajax:send'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;trigger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ajax:success'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;complete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;trigger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ajax:complete'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;trigger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ajax:error'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;crossDomain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isCrossDomain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Only pass url to `ajax` options if not blank&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ajax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;A rundown of the most important parts of this function:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;handleRemote first checks to make sure you haven’t disabled ajax by seeing if &lt;a href=&quot;#fire&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;rails.fire&lt;/code&gt;&lt;/a&gt; returns true when the &lt;code class=&quot;highlighter-rouge&quot;&gt;ajax:before&lt;/code&gt; event is triggered.  This allows you to stop the whole process, should you so choose.&lt;/li&gt;
+  &lt;li&gt;handleRemote then collects data that it will need to actually perform that ajax request.  It checks for a &lt;code class=&quot;highlighter-rouge&quot;&gt;method&lt;/code&gt; (ie. HTTP verb) and &lt;code class=&quot;highlighter-rouge&quot;&gt;URL&lt;/code&gt; to submit to using &lt;a href=&quot;https://api.jquery.com/data/#data2&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.data()&lt;/code&gt;&lt;/a&gt;, which reads the specified data attributes from the element.  If they aren’t present, it defaults to the &lt;code class=&quot;highlighter-rouge&quot;&gt;method&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;action&lt;/code&gt; attributes on the element, respectively.&lt;/li&gt;
+  &lt;li&gt;Next, it build up a &lt;code class=&quot;highlighter-rouge&quot;&gt;options&lt;/code&gt; object to pass over to the Ajax function with a variety of standard Ajax options that immediately trigger custom Events (for your own event handlers to deal with).&lt;/li&gt;
+  &lt;li&gt;Finally, the options object is passed onto &lt;a href=&quot;#ajax&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;rails.ajax&lt;/code&gt;&lt;/a&gt; to actually perform the Ajax request.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a name=&quot;bindings&quot;&gt;&lt;/a&gt;
+&lt;strong&gt;Event Binding&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The rest of rails.js deals with event binding for the various events that it helps with.  The binding that concerns forms is as follows:&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;$document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;delegate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;formSubmitSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'submit.rails'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;remote&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isRemote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;blankRequiredInputs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;nonBlankFileInputs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;allowAction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;stopEverything&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// Skip other logic when required values are missing or file upload is present&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'novalidate'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;undefined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ujs:formnovalidate-button'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;undefined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;blankRequiredInputs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;blankInputs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;requiredInputSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;blankRequiredInputs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ajax:aborted:required'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;blankRequiredInputs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;stopEverything&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// Clear the formnovalidate in case the next button click is not on a formnovalidate button&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// Not strictly necessary to do here, since it is also reset on each button click, but just to be certain&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ujs:formnovalidate-button'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;undefined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;remote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;nonBlankFileInputs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;nonBlankInputs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fileInputSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;nonBlankFileInputs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// Slight timeout so that the submit button gets properly serialized&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// (make it easy for event handler to serialize form without disabled values)&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;setTimeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;disableFormElements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;13&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aborted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fire&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ajax:aborted:file'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;nonBlankFileInputs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+
+      &lt;span class=&quot;c1&quot;&gt;// Re-enable form elements if event bindings return false (canceling normal form submission)&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;aborted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;setTimeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;enableFormElements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;13&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aborted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handleRemote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Slight timeout so that the submit button gets properly serialized&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;setTimeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;disableFormElements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;13&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;On form submit, this event handler is called. Here’s a rundown of what it does:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;It checks the &lt;code class=&quot;highlighter-rouge&quot;&gt;data-confirm&lt;/code&gt; attribute (with the &lt;code class=&quot;highlighter-rouge&quot;&gt;rails.allowAction&lt;/code&gt; function, which will return true if no function stops it) to see if the action needs to be confirmed prior to proceeding.&lt;/li&gt;
+  &lt;li&gt;Next, it checks for a &lt;code class=&quot;highlighter-rouge&quot;&gt;novalidate&lt;/code&gt; attribute, which indicates that the form is not validated upon submit.  If &lt;code class=&quot;highlighter-rouge&quot;&gt;novalidate&lt;/code&gt; is not present, it will check for blank inputs (with the &lt;code class=&quot;highlighter-rouge&quot;&gt;rails.blankInputs&lt;/code&gt; function).  If there are blank inputs, it will stop submission of the form.&lt;/li&gt;
+  &lt;li&gt;Then it checks if &lt;a href=&quot;#isRemote&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;isRemote&lt;/code&gt;&lt;/a&gt; is true. If so, it will check if there is a file input that has content in it.  This will allow you to implement a custom Ajax file upload method.&lt;/li&gt;
+  &lt;li&gt;Finally, it uses &lt;a href=&quot;#handleRemote&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;handleRemote&lt;/code&gt;&lt;/a&gt; to deal with the form submission, and returns false to cancel regular submission.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;jQuery-UJS clearly does a lot in 534 lines.  But it’s not magic!  The next time you’re able to just write &lt;code class=&quot;highlighter-rouge&quot;&gt;remote: true&lt;/code&gt; to submit a form via Ajax, remember that rails.js is saving you a lot of time by being awesome.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
+      &lt;p&gt;All examples in this section taken from &lt;a href=&quot;http://edgeguides.rubyonrails.org/working_with_javascript_in_rails.html&quot;&gt;this Rails Guide&lt;/a&gt;.&amp;nbsp;&lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
+      &lt;p&gt;I have excerpted this function (marked with &lt;code class=&quot;highlighter-rouge&quot;&gt;...&lt;/code&gt;) to just show how it works with forms, for the sake of brevity.&amp;nbsp;&lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Wed, 17 Feb 2016 05:11:06 -0500</pubDate>
+        <link>https://www.jonathanpike.net/2016/02/Diving-into-jQuery-UJS</link>
+        <guid isPermaLink="true">https://www.jonathanpike.net/2016/02/Diving-into-jQuery-UJS</guid>
+      </item>
+    
+  </channel>
+</rss>
