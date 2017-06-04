@@ -1,0 +1,38 @@
+// Headers
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-top: $headings-margin-top;
+  margin-bottom: $headings-margin-bottom;
+  font-family: $headings-font-family;
+  font-weight: $headings-font-weight;
+  line-height: $headings-line-height;
+  color: $headings-color;
+}
+
+h1, .h1 { font-size: $font-size-h1; }
+h2, .h2 { font-size: $font-size-h2; }
+h3, .h3 { font-size: $font-size-h3; }
+h4, .h4 { font-size: $font-size-h4; }
+h5, .h5 { font-size: $font-size-h5; }
+h6, .h6 { font-size: $font-size-h6; }
+
+// Horizontal Rules
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba($pd-black,.1);
+}
+
+// Blockquotes
+blockquote {
+  padding: (1rem / 2) 1rem;
+  margin-bottom: 1rem;
+  font-size: $font-size-base * 1.1;
+  color: $pd-light-gray;
+  border-left: .15rem solid $pd-transparent-blue;
+}
+
+.bold { 
+  font-weight: bold;
+}

@@ -1,0 +1,14 @@
+---
+# This configuration file is where you can change settings for your 
+# Mako site.
+
+# To change the theme, uncomment the next line and change the name of the 
+# theme.  Be sure that your .html.erb and .scss files both match the 
+# name of the theme. 
+
+# theme: simple
+
+# By default, images are removed from any articles from your feeds. If you
+# want images to be loaded in, change this next line to false. 
+
+# sanitize_images: true

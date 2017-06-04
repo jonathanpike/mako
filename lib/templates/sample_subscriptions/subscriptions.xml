@@ -1,0 +1,12 @@
+<opml version="2.0">
+	<body>
+		<outline text="Subscriptions" title="Subscriptions">
+			<outline xmlUrl='https://jonathanpike.net/feed.xml' />
+<outline xmlUrl='https://daringfireball.net/feeds/main' />
+<outline xmlUrl='https://marco.org/rss' />
+<outline xmlUrl='https://www.speedshop.co/feed.xml' />
+<outline xmlUrl='https://tenderlovemaking.com/atom.xml' />
+	
+		</outline>
+	</body>
+</opml>
