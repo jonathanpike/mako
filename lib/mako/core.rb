@@ -58,10 +58,9 @@ module Mako
     # Provides build time logging information and writes it to STDOUT.
     def log_time
       Mako.logger.info 'Generating...'
-      start_time = Time.now
+      start_time = Time.now.to_f
       yield
-      end_time = Time.now
-      generation_time = ((end_time - start_time) / 60 * 100).round(3)
+      generation_time = Time.now.to_f - start_time
       Mako.logger.info "done in #{generation_time} seconds"
     end
 
