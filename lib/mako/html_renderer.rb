@@ -5,7 +5,7 @@ module Mako
     attr_reader :template, :bound, :feed_template
 
     def initialize(args)
-      @template = File.expand_path(File.join('themes', "#{Mako.config.theme}.html.erb"), Dir.pwd)
+      @template = args.fetch(:template, File.expand_path(File.join('themes', "#{Mako.config.theme}.html.erb"), Dir.pwd))
       @bound = args.fetch(:bound)
       @feed_template = File.expand_path('../layouts/_feed_container.html.erb', __FILE__)
     end

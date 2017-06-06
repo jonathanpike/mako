@@ -4,8 +4,8 @@ module Mako
 
     attr_reader :template
 
-    def initialize(_args)
-      @template = File.expand_path(File.join('themes', "#{Mako.config.theme}.scss"), Dir.pwd)
+    def initialize(args)
+      @template = args.fetch(:template, File.expand_path(File.join('themes', "#{Mako.config.theme}.scss"), Dir.pwd))
     end
 
     # Wrapper for Sass::Engine.  Creates new Sass::Engine instance with main
