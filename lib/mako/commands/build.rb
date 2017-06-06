@@ -7,19 +7,17 @@ module Mako
     #                "--with-sass": builds with SassRenderer
     def self.perform(args)
       subscription_list = load_subscription_list
-      html_template = File.expand_path(File.join('themes', "#{Mako.config.theme}.html.erb"), Dir.pwd)
       if args.include? '--with-sass'
-        sass_template = File.expand_path(File.join('themes', "#{Mako.config.theme}.scss"), Dir.pwd)
         Mako::Core.new(requester: FeedRequester,
                        constructor: FeedConstructor,
-                       renderers: [HTMLRenderer.new(template: html_template, binding: self),
-                                   SassRenderer.new(template: sass_template)],
+                       renderers: [HTMLRenderer,
+                                   SassRenderer],
                        writer: Writer,
                        subscription_list: subscription_list).build
       else
         Mako::Core.new(requester: FeedRequester,
                        constructor: FeedConstructor,
-                       renderers: [HTMLRenderer.new(template: html_template, binding: self)],
+                       renderers: [HTMLRenderer],
                        writer: Writer,
                        subscription_list: subscription_list).build
       end
