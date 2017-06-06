@@ -4,7 +4,6 @@ module Mako
   class Configuration
     DEFAULT_CONFIGURATION = { 'source_templates' => File.expand_path('templates', File.dirname(__FILE__)),
                               'destination' => File.expand_path('site/', Dir.pwd),
-                              'subscription_list' => File.expand_path('subscriptions.xml', Dir.pwd),
                               'theme' => 'simple',
                               'sanitize_images' => true,
                               'config_file' => ''
@@ -31,14 +30,13 @@ module Mako
     end
 
     attr_reader :source_templates, :theme, :destination, :sanitize_images,
-                :subscription_list, :config_file
+                :config_file
 
     def initialize(args)
       @source_templates = args.fetch('source_templates')
       @theme = args.fetch('theme')
       @destination = args.fetch('destination')
       @sanitize_images = args.fetch('sanitize_images')
-      @subscription_list = args.fetch('subscription_list')
       @config_file = args.fetch('config_file')
     end
   end

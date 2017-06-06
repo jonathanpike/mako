@@ -24,7 +24,8 @@ module Mako
     end
 
     def self.load_subscription_list
-      Mako::SubscriptionListParser.new(Mako.config.subscription_list).parse
+      path = File.expand_path(Dir.glob('subscriptions.*').first, Dir.pwd)
+      Mako::SubscriptionListParser.new(list: path).parse
     end
   end
 end
