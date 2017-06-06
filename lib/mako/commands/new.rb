@@ -12,7 +12,6 @@ module Mako
       Mako.logger.info "Created new Mako installation in #{location}"
     end
 
-    private
     # @private
     # Copies source templates to specified path.
     def self.copy_templates(path)
