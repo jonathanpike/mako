@@ -4,7 +4,7 @@ module Mako
 
     attr_reader :template
 
-    def initialize(args)
+    def initialize(_args)
       @template = File.expand_path(File.join('themes', "#{Mako.config.theme}.scss"), Dir.pwd)
     end
 
