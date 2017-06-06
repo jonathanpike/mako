@@ -11,7 +11,7 @@ class HTMLRendererTest < Minitest::Test
     binding_klass.expect :today, Time.now.to_s
     binding_klass.expect :last_updated, Time.now.to_s
 
-    renderer = Mako::HTMLRenderer.new(template: @template, binding: binding_klass)
+    renderer = Mako::HTMLRenderer.new(template: @template, bound: binding_klass)
     rendered = renderer.render
     assert_instance_of String, rendered
 
