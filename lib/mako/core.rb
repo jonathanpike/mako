@@ -29,8 +29,9 @@ module Mako
       log_time do
         request_and_build_feeds
         renderers.each do |renderer|
-          writer.new(renderer: renderer,
-                     destination: File.expand_path(renderer.file_path, Mako.config.destination)).write
+          renderer_instance = renderer.new(bound: self)
+          writer.new(renderer: renderer_instance,
+                     destination: File.expand_path(renderer_instance.file_path, Mako.config.destination)).write
         end
       end
     end
