@@ -2,7 +2,7 @@ require 'yaml'
 
 module Mako
   class Configuration
-    DEFAULT_CONFIGURATION = { 'source_templates' => File.expand_path('templates', File.dirname(__FILE__)),
+    DEFAULT_CONFIGURATION = { 'source_templates' => File.expand_path('../templates', File.dirname(__FILE__)),
                               'destination' => File.expand_path('site/', Dir.pwd),
                               'theme' => 'simple',
                               'sanitize_images' => true,
@@ -23,7 +23,7 @@ module Mako
         config = DEFAULT_CONFIGURATION
         return new(config)
       end
-      user_config = YAML.load(user_config_yaml)
+      user_config = YAML.load(user_config_yaml) || {}
       user_config['config_file'] = file
       config = DEFAULT_CONFIGURATION.merge(user_config)
       new(config)
