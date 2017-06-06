@@ -5,7 +5,7 @@ module Mako
     attr_reader :template
 
     def initialize(args)
-      @template = args.fetch(:template)
+      @template = File.expand_path(File.join('themes', "#{Mako.config.theme}.scss"), Dir.pwd)
     end
 
     # Wrapper for Sass::Engine.  Creates new Sass::Engine instance with main
@@ -14,7 +14,7 @@ module Mako
     # @return [String]
     def render
       Sass::Engine.new(load_resource(template), syntax: :scss,
-                                                load_paths: [File.expand_path('../lib/templates/')],
+                                                load_paths: [File.expand_path('themes/', Dir.pwd)],
                                                 style: :compressed).render
     end
 
