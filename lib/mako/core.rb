@@ -68,12 +68,11 @@ module Mako
       requesters = subscription_list.map { |feed_url| requester.new(feed_url: feed_url) }
       requesters.each do |feed_request|
         feed_response = feed_request.fetch
-        if feed_request.ok?
-          constructed_feed = constructor.new(feed_data: feed_response.body,
-                                             feed_url: feed_response.feed_url)
-                                        .parse_and_create
-          feeds << constructed_feed unless constructed_feed.nil?
-        end
+        next unless feed_request.ok?
+        constructed_feed = constructor.new(feed_data: feed_response.body,
+                                           feed_url: feed_response.feed_url)
+                           .parse_and_create
+        feeds << constructed_feed unless constructed_feed.nil?
       end
     end
   end
