@@ -20,6 +20,7 @@ class CoreTest < Minitest::Test
     requester.expect :feed_url, 'https://jonathanpike.net/feed.xml'
     constructor.expect :new, constructor, [Hash]
     constructor.expect :parse_and_create, true
+    renderer.expect :new, renderer, [Hash]
     renderer.expect :file_path, 'index.html'
     writer.expect :new, writer, [{ renderer: renderer, destination: File.expand_path('index.html', Mako.config.destination) }]
     writer.expect :write, nil
