@@ -6,8 +6,7 @@ module Mako
                               'destination' => File.expand_path('site/', Dir.pwd),
                               'theme' => 'simple',
                               'sanitize_images' => true,
-                              'config_file' => ''
-                            }.freeze
+                              'config_file' => '' }.freeze
 
     include FileOpenUtil
 
@@ -23,7 +22,7 @@ module Mako
         config = DEFAULT_CONFIGURATION
         return new(config)
       end
-      user_config = YAML.load(user_config_yaml) || {}
+      user_config = YAML.safe_load(user_config_yaml) || {}
       user_config['config_file'] = file
       config = DEFAULT_CONFIGURATION.merge(user_config)
       new(config)

@@ -4,5 +4,5 @@ class Numeric
   def days
     self * SECONDS_IN_DAY
   end
-  alias_method :day, :days
+  alias day days
 end

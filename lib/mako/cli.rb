@@ -4,7 +4,7 @@ require_relative 'commands/version'
 
 module Mako
   class CLI
-    COMMANDS = %w(build new version)
+    COMMANDS = %w[build new version].freeze
 
     # Takes ARGV and parses the first element (command) to see if it is
     # in the commands array.  If not, display help.
@@ -35,10 +35,9 @@ module Mako
     # @param [Array] args the remainder of the ARGV arguments
     def self.invoke(command, args = [])
       Object.const_get("Mako::#{command.capitalize}").perform(args)
-      if Mako.errors.any?
-        Mako.errors.messages.each do |error_msg|
-          Mako.logger.warn error_msg
-        end
+      return unless Mako.errors.any?
+      Mako.errors.messages.each do |error_msg|
+        Mako.logger.warn error_msg
       end
     end
   end

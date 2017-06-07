@@ -11,7 +11,7 @@ class FeedRequesterTest < Minitest::Test
       feed = @ok_feed_requester.fetch
       assert_instance_of Mako::FeedRequester, feed
       assert feed.ok?
-      assert feed.body.length > 0
+      assert !feed.body.empty?
     end
   end
 

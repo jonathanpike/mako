@@ -6,7 +6,7 @@ module Mako
     # If the directory specified doesn't exist, it will be created.
     # If no directory is specified, it defaults to the current directory.
     def self.perform(args)
-      location = args.size < 1 ? Dir.pwd : File.expand_path(args.join(' '), Dir.pwd)
+      location = args.empty? ? Dir.pwd : File.expand_path(args.join(' '), Dir.pwd)
       create_dir(File.basename(location)) if location != Dir.pwd && File.directory?(location)
       copy_templates(location)
       Mako.logger.info "Created new Mako installation in #{location}"

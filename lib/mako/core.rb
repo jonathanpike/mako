@@ -21,7 +21,7 @@ module Mako
     def build
       log_configuration_information
 
-      if subscription_list.size < 1
+      if subscription_list.empty?
         Mako.logger.warn 'No feeds were found in your subscriptions file. Please add feeds and try again.'
         return
       end
@@ -71,7 +71,7 @@ module Mako
         next unless feed_request.ok?
         constructed_feed = constructor.new(feed_data: feed_response.body,
                                            feed_url: feed_response.feed_url)
-                           .parse_and_create
+                                      .parse_and_create
         feeds << constructed_feed unless constructed_feed.nil?
       end
     end
