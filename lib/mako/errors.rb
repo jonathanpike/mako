@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mako
   class Errors
     attr_accessor :messages
@@ -17,7 +19,7 @@ module Mako
     #
     # @return [Boolean]
     def any?
-      messages.count > 0
+      messages.count.positive?
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mako
   class Feed
     attr_accessor :feed_url, :url, :title, :articles

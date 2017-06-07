@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mako
   class HTMLRenderer
     include FileOpenUtil

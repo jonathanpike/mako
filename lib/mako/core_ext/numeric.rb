@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Numeric
   SECONDS_IN_DAY = 86_400
 

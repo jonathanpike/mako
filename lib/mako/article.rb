@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mako
   class Article
     attr_reader :title, :published, :summary, :url

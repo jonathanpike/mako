@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mako
   class FeedConstructor
     attr_reader :feed_url, :feed_data

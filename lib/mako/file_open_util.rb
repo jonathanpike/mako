@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module FileOpenUtil
   # Opens and reads the passed in file. Thanks to the following article
   # for explaining how to define a method on the included singleton class:

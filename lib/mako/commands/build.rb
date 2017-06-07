@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mako
   class Build
     # Calls #build on Mako::Core.  This class stores knowledge of all of the

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mako
   class Writer
     attr_reader :renderer, :destination

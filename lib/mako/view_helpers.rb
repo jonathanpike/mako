@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ViewHelpers
   # Returns today's date in Day, Date Month Year format
   #

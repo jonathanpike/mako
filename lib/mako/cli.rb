@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'commands/build'
 require_relative 'commands/new'
 require_relative 'commands/version'
@@ -15,7 +17,7 @@ module Mako
       if COMMANDS.include? command
         CLI.invoke(command, argv)
       else
-        help = <<-EOS
+        help = <<~EOS
           Usage:
             mako [subcommand] [path...]
 
@@ -24,7 +26,7 @@ module Mako
             build     Build your Mako site.
             version   Display the version
         EOS
-        puts help
+        Mako.logger.info help
       end
     end
 

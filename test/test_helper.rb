@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../lib/mako'
 require 'minitest/autorun'
 require 'minitest/mock'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'time'
 require 'erb'
 require 'logger'
@@ -10,6 +12,7 @@ require 'sass'
 require_relative 'mako/core_ext'
 require_relative 'mako/errors'
 require_relative 'mako/file_open_util'
+require_relative 'mako/mako_logger'
 require_relative 'mako/view_helpers'
 require_relative 'mako/configuration'
 require_relative 'mako/subscription_list_parser'
@@ -25,7 +28,7 @@ require_relative 'mako/cli'
 
 module Mako
   def self.logger
-    @logger ||= Logger.new(STDOUT)
+    @logger ||= MakoLogger.new(STDOUT)
   end
 
   def self.config
