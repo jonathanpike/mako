@@ -2,6 +2,9 @@ require_relative '../lib/mako'
 require 'minitest/autorun'
 require 'minitest/mock'
 require 'vcr'
+require 'coveralls'
+
+Coveralls.wear!
 
 VCR.configure do |config|
   config.cassette_library_dir = 'test/vcr_cassettes'
