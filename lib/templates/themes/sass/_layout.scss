@@ -28,13 +28,17 @@ a:hover{
 }
 
 #banner { 
-  background-color: $pd-banner-blue; 
+  background-color: $pd-banner; 
   text-align: center;
-  color: #fff;
-  padding: 2em;
+  color: $pd-white;
+  padding-bottom: 0.5em;
   h4 {
     font-style: italic;
   }
+}
+
+.banner-text {
+  display: inline-block;
 }
 
 #feed-container {
@@ -49,7 +53,7 @@ a:hover{
 }
 
 #footer {
-   border-top: 1px solid $pd-light-gray;
+   border-top: 1px dotted $pd-light-gray;
    text-align: center;
    padding-top: 3em;
    margin-bottom: 3em;

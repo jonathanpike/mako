@@ -15,7 +15,7 @@ module Mako
     #
     # @return [String]
     def formatted_published
-      @published.strftime('%A, %d %B %Y')
+      @published.strftime('%A, %d %B %Y at %I:%M %P')
     end
 
     private
