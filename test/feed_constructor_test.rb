@@ -28,13 +28,13 @@ class FeedConstructorTest < Minitest::Test
 
   def test_parse_and_create_with_incompatible_feed_format
     @feed_constructor = Mako::FeedConstructor.new(feed_data: @json_feed, feed_url: 'https://jonathanpike.net/feed.json')
-    @feed_constructor.parse_and_create
+    refute @feed_constructor.parse_and_create
     assert_includes Mako.errors.messages, "Unable to parse #{@feed_constructor.feed_url}."
   end
 
   def test_parse_and_create_with_not_xml_document
     @feed_constructor = Mako::FeedConstructor.new(feed_data: @not_xml, feed_url: 'https://jonathanpike.net')
-    @feed_constructor.parse_and_create
+    refute @feed_constructor.parse_and_create
     assert_includes Mako.errors.messages, "Unable to parse #{@feed_constructor.feed_url}."
   end
 end

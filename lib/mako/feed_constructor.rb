@@ -10,12 +10,12 @@ module Mako
     end
 
     # Parses raw XML feed and creates Feed and Article objects to
-    # be rendered.
+    # be rendered. Returns false if feed cannot be parsed.
     #
     # @return [Feed]
     def parse_and_create
       parsed_feed = parse_feed
-      return unless parsed_feed
+      return false unless parsed_feed
       feed = create_feed(parsed_feed)
       create_articles(feed, parsed_feed)
       feed
