@@ -12,6 +12,6 @@ module ViewHelpers
   #
   # @return [String]
   def last_updated
-    Time.now.strftime('%m %b %Y %H:%M:%S')
+    Time.now.strftime('%d %b %Y %H:%M:%S')
   end
 end
