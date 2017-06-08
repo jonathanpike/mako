@@ -16,12 +16,12 @@
 
     <section id="feed-container">
       <% feeds.each do |feed| %> 
-        <% if feed.articles.size > 0 %>
+        <% if feed.articles.size.positive? %>
           <section>
             <header class="article-header">
               <h1><a href="<%= feed.url %>"><%= h(feed.title) %></a></h1>
             </header>
-            <% feed.articles.each do |article| %>
+            <% feed.articles_desc.each do |article| %>
               <article>
                 <h3><a href="<%= article.url %>"><%= h(article.title) %></a></h3>
                 <p class="meta"><%= article.formatted_published %></p>
