@@ -9,5 +9,21 @@ module Mako
       @title = args.fetch(:title)
       @articles = []
     end
+
+    # Returns the articles array sorted by date published ascending
+    # (oldest first).
+    #
+    # @return [Array]
+    def articles_asc
+      articles.sort_by(&:published)
+    end
+
+    # Returns the articles array sorted by date published descending
+    # (newest first).
+    #
+    # @return [Array]
+    def articles_desc
+      articles_asc.reverse
+    end
   end
 end
