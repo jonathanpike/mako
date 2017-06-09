@@ -24,6 +24,11 @@ module Mako
         self.ok = false
         return self
       end
+      unless request.status == 200
+        Mako.errors.add_error "Request to #{feed_url} returned #{request.status}."
+        self.ok = false
+        return self
+      end
       self.body = request.body
       self
     end

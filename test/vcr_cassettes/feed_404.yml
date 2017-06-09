@@ -1,0 +1,80 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://jonathanpike.net/noop
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.12.1
+  response:
+    status:
+      code: 404
+      message: 
+    headers:
+      cache-control:
+      - public, max-age=0, must-revalidate
+      content-length:
+      - '1866'
+      content-type:
+      - text/html; charset=utf-8
+      date:
+      - Thu, 08 Jun 2017 23:43:02 GMT
+      etag:
+      - 1496948757-ssl
+      age:
+      - '48619'
+      connection:
+      - close
+      server:
+      - Netlify
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        PCFET0NUWVBFIGh0bWw+DQo8aHRtbD4NCiAgPGhlYWQ+DQogICAgPG1ldGEg
+        Y2hhcnNldD0idXRmLTgiPg0KDQogICAgPHRpdGxlPlBhZ2UgTm90IGZvdW5k
+        PC90aXRsZT4NCiAgICA8bGluayBocmVmPSdodHRwczovL2ZvbnRzLmdvb2ds
+        ZWFwaXMuY29tL2Nzcz9mYW1pbHk9Um9ib3RvOjQwMCw3MDAmc3Vic2V0PWxh
+        dGluLGxhdGluLWV4dCcgcmVsPSdzdHlsZXNoZWV0JyB0eXBlPSd0ZXh0L2Nz
+        cyc+DQogICAgPHN0eWxlPg0KICAgICAgKiB7DQogICAgICAgIC13ZWJraXQt
+        Ym94LXNpemluZzogYm9yZGVyLWJveDsNCiAgICAgICAgICAgLW1vei1ib3gt
+        c2l6aW5nOiBib3JkZXItYm94Ow0KICAgICAgICAgICAgLW1zLWJveC1zaXpp
+        bmc6IGJvcmRlci1ib3g7DQogICAgICAgICAgICAgICAgYm94LXNpemluZzog
+        Ym9yZGVyLWJveDsNCiAgICAgIH0NCiAgICAgIGJvZHksIGh0bWwgew0KICAg
+        ICAgICBoZWlnaHQ6IDEwMCU7DQogICAgICB9DQoNCiAgICAgIGJvZHkgew0K
+        ICAgICAgICBiYWNrZ3JvdW5kOiAjZjRmNmY2Ow0KICAgICAgICBmb250LWZh
+        bWlseTogJ1JvYm90bycsIHNhbnMtc2VyaWY7DQogICAgICAgIGNvbG9yOiAj
+        NDE0NTQ2Ow0KICAgICAgICBkaXNwbGF5OiBmbGV4Ow0KICAgICAgICBhbGln
+        bi1pdGVtczogY2VudGVyOw0KICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNl
+        bnRlcjsNCiAgICAgIH0NCg0KICAgICAgcCB7DQogICAgICAgIG1hcmdpbjog
+        MjBweCAwOw0KICAgICAgfQ0KDQogICAgICAucGFuZWwgew0KICAgICAgICBi
+        YWNrZ3JvdW5kOiAjZWVlOw0KICAgICAgICBwYWRkaW5nOiA0MHB4IDYwcHg7
+        DQogICAgICAgIGJvcmRlci1yYWRpdXM6IDZweDsNCiAgICAgICAgd2lkdGg6
+        IDQwZW07DQogICAgICAgIG1hcmdpbjogNTBweCBhdXRvOw0KICAgICAgICBt
+        YXgtd2lkdGg6IDEwMCU7DQogICAgICB9DQoNCiAgICAgIGEsIGE6bGluaywg
+        YTphY3RpdmUsIGE6dmlzaXRlZCB7DQogICAgICAgIGNvbG9yOiAjMDBjN2I3
+        Ow0KICAgICAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7DQogICAgICB9DQog
+        ICAgICBhOmhvdmVyIHsNCiAgICAgICAgdGV4dC1kZWNvcmF0aW9uOiB1bmRl
+        cmxpbmU7DQogICAgICB9DQogICAgPC9zdHlsZT4NCiAgPC9oZWFkPg0KICA8
+        Ym9keT4NCg0KICAgIDxkaXYgY2xhc3M9Im1haW4iPg0KICAgICAgPGRpdiBj
+        bGFzcz0icGFuZWwiPg0KICAgICAgICA8ZGl2IGNsYXNzPSJoZWFkZXIiPg0K
+        ICAgICAgICAgIDxoMT5QYWdlIE5vdCBmb3VuZDwvaDE+DQogICAgICAgIDwv
+        ZGl2Pg0KICAgICAgICA8ZGl2IGNsYXNzPSJib2R5Ij4NCg0KICAgICAgICAg
+        IDxwPkxvb2tzIGxpa2UgeW91J3ZlIGZvbGxvd2VkIGEgYnJva2VuIGxpbmsg
+        b3IgZW50ZXJlZCBhIFVSTCB0aGF0IGRvZXNuJ3QgZXhpc3Qgb24gdGhpcyBz
+        aXRlLjwvcD4NCg0KICAgICAgICAgIDxwPg0KICAgICAgICAgICAgPGEgaWQ9
+        ImJhY2stbGluayIgaHJlZj0iLyI+4oaQIEJhY2sgdG8gb3VyIHNpdGU8L2E+
+        DQogICAgICAgICAgPC9wPg0KICAgICAgICA8L2Rpdj4NCiAgICAgIDwvZGl2
+        Pg0KICAgIDwvZGl2Pg0KICAgIDxzY3JpcHQ+DQogICAgICAoZnVuY3Rpb24o
+        KSB7DQogICAgICAgIGlmIChkb2N1bWVudC5yZWZlcnJlciAmJiBkb2N1bWVu
+        dC5sb2NhdGlvbi5ob3N0ICYmIGRvY3VtZW50LnJlZmVycmVyLm1hdGNoKG5l
+        dyBSZWdFeHAoIl5odHRwcz86Ly8iICsgZG9jdW1lbnQubG9jYXRpb24uaG9z
+        dCkpKSB7DQogICAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImJh
+        Y2stbGluayIpLnNldEF0dHJpYnV0ZSgiaHJlZiIsIGRvY3VtZW50LnJlZmVy
+        cmVyKTsNCiAgICAgICAgfQ0KICAgICAgfSkoKTsNCiAgICA8L3NjcmlwdD4N
+        CiAgPC9ib2R5Pg0KPC9odG1sPg0K
+    http_version: 
+  recorded_at: Fri, 09 Jun 2017 13:13:21 GMT
+recorded_with: VCR 2.9.3
