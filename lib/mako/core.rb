@@ -74,7 +74,7 @@ module Mako
         constructed_feed = constructor.new(feed_data: feed_response.body,
                                            feed_url: feed_response.feed_url)
                                       .parse_and_create
-        feeds << constructed_feed unless constructed_feed
+        feeds << constructed_feed if constructed_feed
       end
     end
   end
