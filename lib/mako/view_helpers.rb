@@ -20,7 +20,7 @@ module ViewHelpers
   # @return [String]
   def quick_nav(feeds)
     feeds.select { |feed| feed.articles.size.positive? }
-         .each_with_index.inject("") do |string, (feed, index)|
+         .each_with_index.inject('') do |string, (feed, index)|
       string += "<a href='#feed-#{index}' class='quick-nav-item'>#{feed.title} <div class='circle'>#{feed.articles.size}</div></a>"
       string
     end
