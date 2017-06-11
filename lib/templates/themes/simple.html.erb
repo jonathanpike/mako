@@ -14,23 +14,26 @@
       <h4 class="banner-text"><%= today %></h4>
     </header>
 
+    <nav id="quick-nav">
+      <%= quick_nav(feeds) %>
+    </nav>
+
     <section id="feed-container">
-      <% feeds.each do |feed| %> 
-        <% if feed.articles.size.positive? %>
-          <section>
-            <header class="article-header">
-              <h1><a href="<%= feed.url %>"><%= h(feed.title) %></a></h1>
-            </header>
-            <% feed.articles_desc.each do |article| %>
-              <article>
-                <h3><a href="<%= article.url %>"><%= h(article.title) %></a></h3>
-                <p class="meta"><%= article.formatted_published %></p>
-                <%= article.summary %>
-              </article>
-              <hr />
-            <% end %>
-          </section>
-        <% end %>
+      <% feeds.select { |f| f.articles.size.positive? }.each_with_index do |feed, index| %> 
+        <section>
+          <header class="article-header">
+            <h1><a href="<%= feed.url %>" id=<%= "feed-#{index}" %>><%= h(feed.title) %></a></h1>
+          </header>
+          <% feed.articles_desc.each do |article| %>
+            <article>
+              <h3><a href="<%= article.url %>"><%= h(article.title) %></a></h3>
+              <p class="meta"><%= article.formatted_published %></p>
+              <%= article.summary %>
+              <p class="back-to-top"><a href="#banner">Back to Top</a></p>
+            </article>
+            <hr />
+          <% end %>
+        </section>
       <% end %>
     </section>
 

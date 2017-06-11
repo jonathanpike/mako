@@ -31,7 +31,6 @@ a:hover{
   background-color: $pd-banner; 
   text-align: center;
   color: $pd-white;
-  padding-bottom: 0.5em;
   h4 {
     font-style: italic;
   }
@@ -39,6 +38,42 @@ a:hover{
 
 .banner-text {
   display: inline-block;
+}
+
+#quick-nav {
+  background-color: $pd-banner-light;
+  max-width: 650px;
+  margin: auto;
+  margin-top:5px;
+  padding: 5px;
+  text-align: center;
+}
+
+.quick-nav-item {
+  display: inline-block;
+  padding: 3px;
+  margin: 0 0.25em;
+}
+
+a.quick-nav-item {
+  border-bottom: 0px;
+  color: $pd-white;
+}
+
+a.quick-nav-item:hover { 
+  color: $pd-banner-dark;
+}
+
+.circle { 
+  display: inline-block;
+  background: #84BE62;
+  padding: 3px 9px;
+  border: 2px solid $pd-white;
+  border-radius: 100px;
+}
+
+.back-to-top {
+  text-align: right;
 }
 
 #feed-container {
