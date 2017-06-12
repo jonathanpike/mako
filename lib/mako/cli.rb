@@ -2,11 +2,12 @@
 
 require_relative 'commands/build'
 require_relative 'commands/new'
+require_relative 'commands/schedule'
 require_relative 'commands/version'
 
 module Mako
   class CLI
-    COMMANDS = %w[build new version].freeze
+    COMMANDS = %w[build new schedule version].freeze
 
     # Takes ARGV and parses the first element (command) to see if it is
     # in the commands array.  If not, display help.
@@ -23,8 +24,12 @@ module Mako
 
           Subcommands:
             new       Create a new Mako scaffold in PATH.  If no PATH provided, defaults to current directory.
-            build     Build your Mako site.
-            version   Display the version
+            build     Build your Mako site. Default: only build HTML.
+            schedule  Schedule Mako to build according to your schedule.rb file.
+            version   Display the version.
+
+          Options:
+            --with-sass  When supplied to build, also generates CSS from SCSS files.
         EOS
         Mako.logger.info help
       end
