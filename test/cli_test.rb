@@ -11,7 +11,6 @@ class CLITest < Minitest::Test
       Subcommands:
         new       Create a new Mako scaffold in PATH.  If no PATH provided, defaults to current directory.
         build     Build your Mako site. Default: only build HTML.
-        schedule  Schedule Mako to build according to your schedule.rb file.
         version   Display the version.
 
       Options:
