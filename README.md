@@ -13,7 +13,7 @@ I designed Mako with the following principals in mind:
 
 To install Mako, do:
 
-    $ gem install mako
+    $ gem install mako_rss
 
 Once the gem is installed, you'll need to generate a new Mako site.  You can do
 this in 1 of 2 ways.  
