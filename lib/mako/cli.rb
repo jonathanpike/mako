@@ -2,11 +2,12 @@
 
 require_relative 'commands/build'
 require_relative 'commands/new'
+require_relative 'commands/find'
 require_relative 'commands/version'
 
 module Mako
   class CLI
-    COMMANDS = %w[build new version].freeze
+    COMMANDS = %w[build new find version].freeze
 
     # Takes ARGV and parses the first element (command) to see if it is
     # in the commands array.  If not, display help.
@@ -24,6 +25,7 @@ module Mako
           Subcommands:
             new       Create a new Mako scaffold in PATH.  If no PATH provided, defaults to current directory.
             build     Build your Mako site. Default: only build HTML.
+            find      Find the feed url for a supplied URL.  Accepts more than 1 URL at a time.
             version   Display the version.
 
           Options:
