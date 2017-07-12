@@ -14,15 +14,21 @@ module Mako
     #
     # @return [Array]
     def parse
-      loaded_list = load_resource(list)
       case File.extname list
       when '.xml' || '.opml'
-        Nokogiri::XML(loaded_list).xpath('//@xmlUrl').map(&:value)
+        Nokogiri::XML(load_list).xpath('//@xmlUrl').map(&:value)
       when '.json'
-        JSON.parse(loaded_list)
+        JSON.parse(load_list)
       when '.txt'
-        loaded_list.split("\n")
+        load_list.split("\n")
       end
+    end
+
+    # Load the subscription list file
+    #
+    # @return [String]
+    def load_list
+      load_resource(list)
     end
   end
 end
