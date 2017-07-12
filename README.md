@@ -62,6 +62,18 @@ Whichever you choose, place the file in the root directory and be sure its name
 is `subscriptions`.  The file extension (`.xml`/`.opml`, `.json`, or `.txt`)
 will tell Mako what kind of subscription file you have.
 
+## Subscribing to Additional Feeds
+
+If you already have imported your subscription file, and subsequently want to
+subscribe to additional feeds, Mako has a handy `subscribe` command to help you
+out.
+
+    $ mako subscribe [url or urls]
+
+It's generally best if you use the root URL of the site you would like to
+subscribe to, such as https://jonathanpike.net.  Mako will look at the site,
+find a feed URL if it can, and add that URL to your subscription file.  Easy!
+
 ## Configuration
 
 Mako has very few configuration options.  You can see all of them in the
