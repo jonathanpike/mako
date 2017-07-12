@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'test_helper'
+require_relative '../test_helper'
 
 class ArticleTest < Minitest::Test
   def test_article_body_is_sanitized_without_images

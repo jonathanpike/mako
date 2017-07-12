@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'test_helper'
+require_relative '../test_helper'
 
 class HTMLRendererTest < Minitest::Test
   def setup
-    @template = File.expand_path('helper_files/simple.html.erb', File.dirname(__FILE__))
+    @template = File.expand_path('../helper_files/simple.html.erb', File.dirname(__FILE__))
   end
 
   def test_render_returns_string
