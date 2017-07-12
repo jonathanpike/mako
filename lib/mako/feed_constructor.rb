@@ -58,14 +58,13 @@ module Mako
       end
     end
 
-    # Atom and RSS Feedjira::Feed objects have different names for the
-    # article body. Returns entry.content if Atom and entry.summary if
-    # RSS.
+    # Some feeds use summary for the full article body, other feeds use content.
+    # This prefers content, but falls back to summary.
     #
     # @param [Feedjira::Feed]
     # @return [String] an HTML string of the source article body
     def entry_summary(entry)
-      entry.class.to_s.include?('Atom') ? entry.content : entry.summary
+      !entry.content || entry.content.empty? ? entry.summary : entry.content
     end
   end
 end
