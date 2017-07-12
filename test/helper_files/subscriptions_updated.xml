@@ -18,6 +18,9 @@
 			<outline xmlUrl="http://scripting.com/feed.xml"/>
 			<outline xmlUrl="https://www.speedshop.co/feed.xml"/>
 			<outline xmlUrl="https://tenderlovemaking.com/atom.xml"/>
-		</outline>
+		<outline xmlUrl="https://m.signalvnoise.com/feed"/>
+<outline xmlUrl="http://blog.testdouble.com/index.xml"/>
+<outline xmlUrl="https://512pixels.net/feed/"/>
+</outline>
 	</body>
 </opml>

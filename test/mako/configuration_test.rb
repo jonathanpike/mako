@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'test_helper'
+require_relative '../test_helper'
 
 class ConfigurationTest < Minitest::Test
   def test_works_without_configuration_file
@@ -12,7 +12,7 @@ class ConfigurationTest < Minitest::Test
   end
 
   def test_works_with_configuration_file
-    config_file = File.expand_path('config.yaml', File.dirname(__FILE__))
+    config_file = File.expand_path('../config.yaml', File.dirname(__FILE__))
     config = Mako::Configuration.load(config_file)
     assert_instance_of Mako::Configuration, config
     assert_equal 'complex', config.theme

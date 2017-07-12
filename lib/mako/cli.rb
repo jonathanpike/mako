@@ -2,11 +2,12 @@
 
 require_relative 'commands/build'
 require_relative 'commands/new'
+require_relative 'commands/subscribe'
 require_relative 'commands/version'
 
 module Mako
   class CLI
-    COMMANDS = %w[build new version].freeze
+    COMMANDS = %w[build new subscribe version].freeze
 
     # Takes ARGV and parses the first element (command) to see if it is
     # in the commands array.  If not, display help.
@@ -24,6 +25,7 @@ module Mako
           Subcommands:
             new       Create a new Mako scaffold in PATH.  If no PATH provided, defaults to current directory.
             build     Build your Mako site. Default: only build HTML.
+            subscribe Subscribe to the supplied URL or URLs.  Accepts a list separated by spaces.
             version   Display the version.
 
           Options:

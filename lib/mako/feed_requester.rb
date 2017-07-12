@@ -3,11 +3,12 @@
 module Mako
   class FeedRequester
     attr_reader :feed_url
-    attr_accessor :ok, :body
+    attr_accessor :ok, :body, :headers
 
     def initialize(args)
       @ok = true
       @body = ''
+      @headers = {}
       @feed_url = args.fetch(:feed_url)
     end
 
@@ -18,17 +19,18 @@ module Mako
     # @return [Mako::FeedRequester]
     def fetch
       begin
-        request = Faraday.get(feed_url)
-      rescue Faraday::Error
+        request = HTTParty.get(feed_url)
+      rescue SocketError
         Mako.errors.add_error "Could not complete request to #{feed_url}."
         self.ok = false
         return self
       end
-      unless request.status == 200
-        Mako.errors.add_error "Request to #{feed_url} returned #{request.status}."
+      unless request.code == 200
+        Mako.errors.add_error "Request to #{feed_url} returned #{request.code}."
         self.ok = false
         return self
       end
+      self.headers = request.headers
       self.body = request.body
       self
     end
