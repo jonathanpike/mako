@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'test_helper'
+require_relative '../test_helper'
 
 class FeedRequesterTest < Minitest::Test
   def setup
@@ -9,7 +9,7 @@ class FeedRequesterTest < Minitest::Test
     @feed_requester404 = Mako::FeedRequester.new(feed_url: 'https://jonathanpike.net/noop')
   end
 
-  def test_fetch_returns_faraday_object
+  def test_fetch_returns_httparty_object
     VCR.use_cassette('working_feed') do
       feed = @ok_feed_requester.fetch
       assert_instance_of Mako::FeedRequester, feed
@@ -18,7 +18,7 @@ class FeedRequesterTest < Minitest::Test
     end
   end
 
-  def test_fetch_failure_faraday_error
+  def test_fetch_failure_error
     VCR.use_cassette('not_working_feed') do
       @not_ok_feed_requester.fetch
       refute @not_ok_feed_requester.ok?
