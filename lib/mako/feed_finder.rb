@@ -33,11 +33,7 @@ module Mako
           next if potential_feed_uris.empty?
           uri_string = potential_feed_uris.first.value
           feed_uri = URI.parse(uri_string)
-          if request[:uri].host == feed_uri.host
-            feed_uri.to_s
-          else
-            request[:uri].merge(feed_uri).to_s
-          end
+          feed_uri.absolutize!(request[:uri])
         end
       end.compact
     end

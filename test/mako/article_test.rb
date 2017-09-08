@@ -9,7 +9,7 @@ class ArticleTest < Minitest::Test
                                    published: Time.now,
                                    summary: "<h1>Hello</h1> \n <p>This is an article</p> <img src='example'>",
                                    url: 'http://example.com')
-      assert_equal "<p class=\"bold\">Hello</p> \n <p>This is an article</p> ", @article.summary
+      assert_equal "<p class=\"bold\">Hello</p> \n <p>This is an article</p> <a src=\"example\" href=\"http://example.com/example\">📷 </a>", @article.summary
     end
   end
 
