@@ -30,21 +30,19 @@ module Mako
         else
           html = Nokogiri::HTML(request[:body])
           potential_feed_uris = html.xpath(XPATHS.detect { |path| !html.xpath(path).empty? })
-          next if potential_feed_uris.empty?
+          if potential_feed_uris.empty?
+            Mako.errors.add_error "Could not find feed for #{request[:uri]}"
+            next
+          end
           uri_string = potential_feed_uris.first.value
           feed_uri = URI.parse(uri_string)
-          if request[:uri].host == feed_uri.host
-            feed_uri.to_s
-          else
-            request[:uri].merge(feed_uri).to_s
-          end
+          feed_uri.absolutize!(request[:uri])
         end
       end.compact
     end
 
     private
 
-    # @private
     # Make requests for each URI passed in and return an array of hashes
     # with either just the URI (in the case that the URI passed in was already
     # a feed URI), or the URI and the response body.

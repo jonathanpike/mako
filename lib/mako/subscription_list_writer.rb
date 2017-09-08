@@ -22,7 +22,6 @@ module Mako
 
     private
 
-    # @private
     # Returns the rendered string for the correct file type.
     #
     # @return [String]
