@@ -49,7 +49,6 @@ module Mako
 
     private
 
-    # @private
     # Prints configuration file, source, and destination directory to STDOUT.
     def log_configuration_information
       Mako.logger.info "Configuration File: #{Mako.config.config_file}"

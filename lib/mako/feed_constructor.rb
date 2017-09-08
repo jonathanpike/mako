@@ -23,7 +23,6 @@ module Mako
 
     private
 
-    # @private
     # Takes raw XML and parses it into a Feedjira::Feed object
     #
     # @return [Feedjira::Feed]

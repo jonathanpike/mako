@@ -43,7 +43,6 @@ module Mako
 
     private
 
-    # @private
     # Make requests for each URI passed in and return an array of hashes
     # with either just the URI (in the case that the URI passed in was already
     # a feed URI), or the URI and the response body.
