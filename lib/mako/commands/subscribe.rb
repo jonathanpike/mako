@@ -9,6 +9,7 @@ module Mako
       end
       feeds = Mako::FeedFinder.new(uris: args).find
       write_to_subscriptions(feeds)
+      Mako.logger.info "Subscribed to the following feeds: #{feeds}"
     end
 
     def self.write_to_subscriptions(feed_urls)

@@ -30,7 +30,10 @@ module Mako
         else
           html = Nokogiri::HTML(request[:body])
           potential_feed_uris = html.xpath(XPATHS.detect { |path| !html.xpath(path).empty? })
-          next if potential_feed_uris.empty?
+          if potential_feed_uris.empty?
+            Mako.errors.add_error "Could not find feed for #{request[:uri]}"
+            next
+          end
           uri_string = potential_feed_uris.first.value
           feed_uri = URI.parse(uri_string)
           feed_uri.absolutize!(request[:uri])
