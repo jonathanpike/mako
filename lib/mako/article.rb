@@ -37,7 +37,7 @@ module Mako
       if Mako.config.sanitize_images
         doc.css('img').each do |n|
           n.name = 'a'
-          n.content = "📷 #{n['alt']}" || '📷 Image'
+          n.content = n['alt'] ? "📷 #{n['alt']}" : '📷 Image'
           n['href'] = URI.parse(n['src']).absolutize!(uri)
         end
       end
