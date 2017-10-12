@@ -22,7 +22,7 @@
       <% feeds.select { |f| f.articles.size.positive? }.each_with_index do |feed, index| %> 
         <section>
           <header class="article-header">
-            <h1><a href="<%= feed.url %>" id=<%= "feed-#{index}" %>><%= h(feed.title) %></a></h1>
+            <h1><a href="<%= feed.url %>" id=<%= "feed-#{index}" %>><%= feed.title %></a></h1>
           </header>
           <% feed.articles_desc.each do |article| %>
             <article>
