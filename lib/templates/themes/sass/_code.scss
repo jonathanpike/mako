@@ -1,0 +1,14 @@
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  line-height: 1.42857;
+  word-break: break-all;
+  word-wrap: break-word;
+  border-left: .15rem solid $pd-banner;
+}
+
+code {
+  white-space: pre-wrap;
+  font-size: 90%;
+}
