@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 lib = File.expand_path('../lib', __FILE__)
@@ -26,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'minitest', '~> 5.1'
   spec.add_development_dependency 'vcr', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '~> 0.49'
+  spec.add_development_dependency 'rubocop', '~> 0.50'
   spec.add_development_dependency 'coveralls', '~> 0.8'
   spec.add_development_dependency 'webmock', '~> 3.1'
 

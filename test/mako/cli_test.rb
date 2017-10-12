@@ -4,7 +4,7 @@ require_relative '../test_helper'
 
 class CLITest < Minitest::Test
   def setup
-    @help_msg = <<~EOS
+    @help_msg = <<~HELP
       Usage:
         mako [subcommand] [path...]
 
@@ -15,7 +15,7 @@ class CLITest < Minitest::Test
 
       Options:
         --with-sass  When supplied to build, also generates CSS from SCSS files.
-    EOS
+    HELP
   end
 
   def test_displays_help_if_no_argument_provided

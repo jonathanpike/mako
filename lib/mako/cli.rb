@@ -18,7 +18,7 @@ module Mako
       if COMMANDS.include? command
         CLI.invoke(command, argv)
       else
-        help = <<~EOS
+        help = <<~HELP
           Usage:
             mako [subcommand] [path...]
 
@@ -30,7 +30,7 @@ module Mako
 
           Options:
             --with-sass  When supplied to build, also generates CSS from SCSS files.
-        EOS
+        HELP
         Mako.logger.info help
       end
     end
