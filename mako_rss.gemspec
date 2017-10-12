@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'vcr', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.49'
   spec.add_development_dependency 'coveralls', '~> 0.8'
+  spec.add_development_dependency 'webmock', '~> 3.1'
 
   spec.add_runtime_dependency 'feedjira', '~> 2.0'
   spec.add_runtime_dependency 'httparty', '~> 0.15'
