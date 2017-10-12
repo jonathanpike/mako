@@ -20,8 +20,8 @@ module Mako
     def fetch
       begin
         request = HTTParty.get(feed_url)
-      rescue SocketError, HTTParty::RedirectionTooDeep
-        Mako.errors.add_error "Could not complete request to #{feed_url}."
+      rescue => e
+        Mako.errors.add_error "Could not complete request to #{feed_url}: #{e.class}."
         self.ok = false
         return self
       end

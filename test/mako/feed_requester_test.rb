@@ -22,7 +22,7 @@ class FeedRequesterTest < Minitest::Test
     VCR.use_cassette('not_working_feed') do
       @not_ok_feed_requester.fetch
       refute @not_ok_feed_requester.ok?
-      assert_includes Mako.errors.messages, "Could not complete request to #{@not_ok_feed_requester.feed_url}."
+      assert_includes Mako.errors.messages, "Could not complete request to #{@not_ok_feed_requester.feed_url}: SocketError."
     end
   end
 
