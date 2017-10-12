@@ -9,7 +9,7 @@ class FeedFinderTest < Minitest::Test
                http://panic.com/blog https://www.schneems.com http://inessential.com
                m.signalvnoise.com]
     @expected = %w[https://daringfireball.net/feeds/main https://www.jonathanpike.net/feed.xml
-                   http://marco.org/rss http://blog.joshualongbrake.com/rss http://furbo.org/feed/
+                   http://marco.org/rss http://blog.joshualongbrake.com/rss https://furbo.org/feed/
                    http://leancrew.com/all-this/feed/ https://panic.com/blog/feed/
                    https://www.schneems.com/feed.xml http://inessential.com/xml/rss.xml
                    https://m.signalvnoise.com/feed]
