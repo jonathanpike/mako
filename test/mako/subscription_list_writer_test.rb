@@ -4,9 +4,9 @@ require_relative '../test_helper'
 
 class SubscriptionListWriterTest < Minitest::Test
   def setup
-    @xml_subscription = File.expand_path('../helper_files/subscriptions.xml', File.dirname(__FILE__))
-    @json_subscription = File.expand_path('../helper_files/subscriptions.json', File.dirname(__FILE__))
-    @txt_subscription = File.expand_path('../helper_files/subscriptions.txt', File.dirname(__FILE__))
+    @xml_subscription = File.expand_path('../helper_files/subscriptions.xml', __dir__)
+    @json_subscription = File.expand_path('../helper_files/subscriptions.json', __dir__)
+    @txt_subscription = File.expand_path('../helper_files/subscriptions.txt', __dir__)
     @original = %w[https://jonathanpike.net/feed.xml https://daringfireball.net/feeds/main https://marco.org/rss
                    http://blog.joshualongbrake.com/rss http://furbo.org/feed/ http://leancrew.com/all-this/feed/
                    http://rss.desiringgod.org http://gilandamy.blogspot.com/feeds/posts/default?alt=rss
@@ -35,7 +35,7 @@ class SubscriptionListWriterTest < Minitest::Test
 
   def test_xml_file_append_and_render
     actual = Mako::SubscriptionListWriter.new(feeds: @additional_feeds, destination: @xml_subscription).send(:append_and_render)
-    expected = Mako::SubscriptionListParser.new(list: File.expand_path('../helper_files/subscriptions_updated.xml', File.dirname(__FILE__))).load_list
+    expected = Mako::SubscriptionListParser.new(list: File.expand_path('../helper_files/subscriptions_updated.xml', __dir__)).load_list
     assert_equal expected, actual
   end
 end

@@ -12,7 +12,7 @@ class ConfigurationTest < Minitest::Test
   end
 
   def test_works_with_configuration_file
-    config_file = File.expand_path('../config.yaml', File.dirname(__FILE__))
+    config_file = File.expand_path('../config.yaml', __dir__)
     config = Mako::Configuration.load(config_file)
     assert_instance_of Mako::Configuration, config
     assert_equal 'complex', config.theme

@@ -4,7 +4,7 @@ require 'yaml'
 
 module Mako
   class Configuration
-    DEFAULT_CONFIGURATION = { 'source_templates' => File.expand_path('../templates', File.dirname(__FILE__)),
+    DEFAULT_CONFIGURATION = { 'source_templates' => File.expand_path('../templates', __dir__),
                               'destination' => File.expand_path('site/', Dir.pwd),
                               'theme' => 'simple',
                               'sanitize_images' => true,

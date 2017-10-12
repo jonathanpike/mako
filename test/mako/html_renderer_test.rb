@@ -4,7 +4,7 @@ require_relative '../test_helper'
 
 class HTMLRendererTest < Minitest::Test
   def setup
-    @template = File.expand_path('../helper_files/simple.html.erb', File.dirname(__FILE__))
+    @template = File.expand_path('../helper_files/simple.html.erb', __dir__)
   end
 
   def test_render_returns_string
