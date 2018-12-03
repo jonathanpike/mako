@@ -31,6 +31,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'feedjira', '~> 2.0'
   spec.add_runtime_dependency 'httparty', '~> 0.15'
-  spec.add_runtime_dependency 'nokogiri', '~> 1.8.5'
-  spec.add_runtime_dependency 'sass', '~> 3.4'
+  spec.add_runtime_dependency 'nokogiri', '~> 1.8'
+  spec.add_runtime_dependency 'sassc', '~> 2.0'
 end
