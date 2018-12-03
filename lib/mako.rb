@@ -7,7 +7,7 @@ require 'httparty'
 require 'feedjira'
 require 'nokogiri'
 require 'json'
-require 'sass'
+require 'sassc'
 
 require_relative 'mako/core_ext'
 require_relative 'mako/errors'
