@@ -36,14 +36,12 @@ module Mako
       doc = Nokogiri::HTML::DocumentFragment.parse(html)
       if Mako.config.sanitize_images
         doc.css('img').each do |n|
-          begin
-            n.name = 'a'
-            n.content = n['alt'] ? "📷 #{n['alt']}" : '📷 Image'
-            n['href'] = URI.parse(n['src']).absolutize!(uri)
-          rescue URI::InvalidURIError
-            # if there's a problem, just ignore it
-            next
-          end
+          n.name = 'a'
+          n.content = n['alt'] ? "📷 #{n['alt']}" : '📷 Image'
+          n['href'] = URI.parse(n['src']).absolutize!(uri)
+        rescue URI::InvalidURIError
+          # if there's a problem, just ignore it
+          next
         end
       end
       doc.css('h1,h2,h3,h4,h5,h6').each { |n| n.name = 'p'; n.set_attribute('class', 'bold') }
