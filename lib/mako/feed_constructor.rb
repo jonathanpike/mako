@@ -16,6 +16,7 @@ module Mako
     def parse_and_create
       parsed_feed = parse_feed
       return false unless parsed_feed
+
       feed = create_feed(parsed_feed)
       create_articles(feed, parsed_feed)
       feed
@@ -30,7 +31,7 @@ module Mako
       Feedjira::Feed.parse(feed_data)
     rescue Feedjira::NoParserAvailable
       Mako.errors.add_error "Unable to parse #{feed_url}."
-      return false
+      false
     end
 
     # Creates new Mako::Feed object from the parsed Feedjira::Feed object
@@ -50,6 +51,7 @@ module Mako
     def create_articles(feed, parsed_feed)
       parsed_feed.entries.each do |entry|
         next unless entry.published >= (Time.now - 1.day).beginning_of_day
+
         feed.articles << Article.new(title: entry.title,
                                      published: entry.published,
                                      summary: entry_summary(entry),

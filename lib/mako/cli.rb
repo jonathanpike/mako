@@ -43,6 +43,7 @@ module Mako
     def self.invoke(command, args = [])
       Object.const_get("Mako::#{command.capitalize}").perform(args)
       return unless Mako.errors.any?
+
       Mako.errors.messages.each do |error_msg|
         Mako.logger.warn error_msg
       end

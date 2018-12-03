@@ -70,6 +70,7 @@ module Mako
       requesters.each do |feed_request|
         feed_response = feed_request.fetch
         next unless feed_request.ok?
+
         constructed_feed = constructor.new(feed_data: feed_response.body,
                                            feed_url: feed_response.feed_url)
                                       .parse_and_create

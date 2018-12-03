@@ -55,6 +55,7 @@ module Mako
         parsed_uri = URI.parse('http://' + uri) if parsed_uri.scheme.nil?
         request = Mako::FeedRequester.new(feed_url: parsed_uri).fetch
         next unless request.ok?
+
         if MIME_TYPES.include? request.headers['content-type'].split(';').first
           { uri: parsed_uri.to_s }
         else
