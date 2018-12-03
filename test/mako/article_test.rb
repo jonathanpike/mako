@@ -13,6 +13,16 @@ class ArticleTest < Minitest::Test
     end
   end
 
+  def text_article_body_ignores_malformed_image_uris
+    Mako.config.stub :sanitize_images, true do
+      @article = Mako::Article.new(title: 'Test Article',
+                                   published: Time.now,
+                                   summary: "<h1>Hello</h1> \n <p>This is an article</p> <img src='https://example.com/blog/images/malformed image uri.jpg'>",
+                                   url: 'http://example.com')
+      assert_equal "<p class=\"bold\">Hello</p> \n <p>This is an article</p> ", @article.summary
+    end
+  end
+
   def test_article_body_is_sanitized_with_images
     Mako.config.stub :sanitize_images, false do
       @article = Mako::Article.new(title: 'Test Article',
