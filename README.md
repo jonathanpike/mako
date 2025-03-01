@@ -124,7 +124,7 @@ To access the `articles` within a `feed`, you can use:
   - `summary` - a string of the article content.
 
 When in doubt, check out the implementation of [my
-theme](/lib/templates/themese/simple.html.erb).
+theme](/lib/templates/themes/simple.html.erb).
 
 ## Contributing
 
